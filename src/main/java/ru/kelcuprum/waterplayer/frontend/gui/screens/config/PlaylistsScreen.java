@@ -59,13 +59,14 @@ public class PlaylistsScreen {
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.play"), (e) -> AlinLib.MINECRAFT.setScreen(WaterPlayer.getControlScreen(PlaylistsScreen.build(parent)))).setIcon(getPlayOrPause(WaterPlayer.player.getAudioPlayer().isPaused())).setCentered(false).build())
                 //
                 .addWidget(new TextBox(140, 5, Component.translatable("waterplayer.playlists"), true));
+        Screen thisScreen = builder.build();
         if(playlists.exists() && playlists.isDirectory()){
             for(File playlist : Objects.requireNonNull(playlists.listFiles())){
                 if(playlist.isFile() && playlist.getName().endsWith(".json")){
                     try {
                         Playlist playlistObject = new Playlist(playlist.toPath());
                         assetsSize++;
-                        builder.addWidget(new PlaylistButton(140, -50, DEFAULT_WIDTH(), playlistObject, AlinLib.MINECRAFT.screen));
+                        builder.addWidget(new PlaylistButton(140, -50, DEFAULT_WIDTH(), playlistObject, thisScreen));
                     } catch (Exception e){
                         WaterPlayer.log(e.getLocalizedMessage(), Level.ERROR);
                     }

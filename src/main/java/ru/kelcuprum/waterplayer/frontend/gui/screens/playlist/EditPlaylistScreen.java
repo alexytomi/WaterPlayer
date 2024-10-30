@@ -16,6 +16,7 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.gui.Colors;
 import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
+import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBooleanBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
@@ -92,6 +93,7 @@ public class EditPlaylistScreen extends Screen {
     }
     public Button icon;
     public boolean isDeleted = false;
+    public int maxY = 35;
     public void initPanel(){
         int x = 10;
         int size = 200;
@@ -113,6 +115,12 @@ public class EditPlaylistScreen extends Screen {
             playlist.save();
         }).setSecret(false).setValue(playlist.author).setPosition(x, y).setSize(size, 20).build());
         y+=25;
+        addRenderableWidget(new ButtonBooleanBuilder(Component.translatable("waterplayer.playlist.public"), playlist.isPublic, (s) -> {
+            playlist.isPublic = s;
+            playlist.save();
+        }).setSize(size, 20).setPosition(x, y).build());
+        y+=25;
+
             addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.playlist.save"), (s) -> {
                 playlist.save();
                 onClose();
@@ -127,6 +135,8 @@ public class EditPlaylistScreen extends Screen {
                 onClose();
             }
         }).setSprite(RECYCLE_BIN).setPosition(x+size-20, y).setSize(20, 20).build());
+        y+=25;
+        maxY = y;
     }
 
     private ConfigureScrolWidget scroller;
@@ -218,7 +228,7 @@ public class EditPlaylistScreen extends Screen {
         //$$         super.renderBackground(guiGraphics);
         //#endif
         guiGraphics.fill(5, 5, 215, 25, Colors.BLACK_ALPHA);
-        guiGraphics.fill(5, 30, 215, 176, Colors.BLACK_ALPHA);
+        guiGraphics.fill(5, 30, 215, maxY, Colors.BLACK_ALPHA);
     }
 
     //#if MC < 12002

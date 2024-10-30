@@ -154,7 +154,9 @@ public class WaterPlayerAPI {
     @Async.Execute
     public static String uploadPlaylist(Playlist playlist, String id) throws AuthException, WebPlaylistException {
         if(!isVerified()) throw new AuthException("Your account is not authorized!");
-        else if(!playlist.author.equalsIgnoreCase(Player.getName())) throw new AuthException(Component.translatable("waterplayer.playlist.you_not_author").getString());
+        else if(isCorrectPlaylistForPublish(playlist) != null) {
+            throw new WebPlaylistException(isCorrectPlaylistForPublish(playlist));
+        }
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(getURL("/upload")));
             if(config.getBoolean("ENABLE_VERIFY", true)) builder.header("Authorization", "Bearer "+AlinLib.MINECRAFT.getUser().getAccessToken());
@@ -172,11 +174,25 @@ public class WaterPlayerAPI {
             else throw new RuntimeException((e.getMessage() == null ? e.getClass().getName() : e.getMessage()));
         }
     }
+
+    public static String isCorrectPlaylistForPublish(Playlist playlist){
+        String state = null;
+        if(!playlist.author.equalsIgnoreCase(Player.getName())) state = Component.translatable("waterplayer.playlist.error.author").getString();
+        if(playlist.isPublic){
+            if(playlist.urls.size() < config.getNumber("PUBLIC.MIN_URLS", 3).intValue())
+                state = Component.translatable("waterplayer.playlist.error.size", config.getNumber("PUBLIC.MIN_URLS", 3).intValue()).getString();
+            else if(playlist.icon != null && playlist.icon.isEmpty()) state = Component.translatable("waterplayer.playlist.error.icon").getString();
+        }
+        return state;
+    }
+
     public static List<WebPlaylist> searchPlaylists(String query){
         List<WebPlaylist> results = new ArrayList<>();
         if(!config.getBoolean("SEARCH", true)) return results;
         try {
-            JsonObject data = getJsonObject(getURL(String.format("/search?query=%s", query)));
+            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(getURL(String.format("/search?query=%s", query))))
+                    .header("Authorization", "Bearer "+AlinLib.MINECRAFT.getUser().getAccessToken());
+            JsonObject data = getJsonObject(builder);
             if(data.has("error")){
                 throw new WebPlaylistException(data.getAsJsonObject("error").get("message").getAsString());
             }

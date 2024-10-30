@@ -21,6 +21,7 @@ import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
 import ru.kelcuprum.alinlib.gui.components.ImageWidget;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
+import ru.kelcuprum.alinlib.gui.components.text.MessageBox;
 import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.screens.AbstractConfigScreen;
 import ru.kelcuprum.alinlib.gui.toast.ToastBuilder;
@@ -83,6 +84,7 @@ public class ViewPlaylistScreen extends Screen {
 
     public Button upload;
     public ImageWidget icon;
+    public int maxY = 35;
 
     public void initPanel() {
         int x = 10;
@@ -118,6 +120,11 @@ public class ViewPlaylistScreen extends Screen {
             }
         }
         y += 25;
+        if(playlist.isPublic){
+            MessageBox box = addRenderableWidget(new MessageBox(x, y, size, 20, Component.translatable("waterplayer.playlist.upload.public.description"), true,
+                    (s) -> WaterPlayer.confirmLinkNow(this, "https://waterplayer.ru/docs/info")));
+            y+=(box.getHeight()+5);
+        }
         upload = (Button) addRenderableWidget(new ButtonBuilder(Component.translatable(isCreatedLink ? "waterplayer.playlist.copy_link" : "waterplayer.playlist.upload"), (e) -> {
             if (isCreatedLink) {
                 AlinLib.MINECRAFT.keyboardHandler.setClipboard(link);
@@ -146,6 +153,8 @@ public class ViewPlaylistScreen extends Screen {
             WaterPlayer.player.getTrackScheduler().changeQueue(new PlaylistQueue(this.playlist));
         })
                 .setSprite(PLAY).setPosition(x + size - 20, y).setSize(20, 20).build());
+        y+= 25;
+        maxY = y;
     }
 
     private ConfigureScrolWidget scroller;
@@ -183,7 +192,7 @@ public class ViewPlaylistScreen extends Screen {
         }
     }
     public boolean isClownfishMoment(){
-        return trackWidgets.isEmpty() && webPlaylist == null && isInit;
+        return playlist.urls.isEmpty();
     }
 
     public static MusicPlayer searchPlayer = new MusicPlayer();
@@ -290,7 +299,7 @@ public class ViewPlaylistScreen extends Screen {
             );
         }
         guiGraphics.fill(5, 5, 215, 25, Colors.BLACK_ALPHA);
-        guiGraphics.fill(5, 30, 215, 151, Colors.BLACK_ALPHA);
+        guiGraphics.fill(5, 30, 215, maxY, Colors.BLACK_ALPHA);
     }
 
 
