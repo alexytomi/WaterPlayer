@@ -125,7 +125,7 @@ public class ViewPlaylistScreen extends Screen {
                     (s) -> WaterPlayer.confirmLinkNow(this, "https://waterplayer.ru/docs/info")));
             y+=(box.getHeight()+5);
         }
-        upload = (Button) addRenderableWidget(new ButtonBuilder(Component.translatable(isCreatedLink ? "waterplayer.playlist.copy_link" : "waterplayer.playlist.upload"), (e) -> {
+        upload = (Button) addRenderableWidget(new ButtonBuilder(Component.translatable(isCreatedLink ? "waterplayer.playlist.copy_link" : "waterplayer.playlist.upload"), (e) -> new Thread(() -> {
             if (isCreatedLink) {
                 AlinLib.MINECRAFT.keyboardHandler.setClipboard(link);
                 WaterPlayer.getToast().setMessage(Component.translatable("waterplayer.playlist.link_copied")).buildAndShow();
@@ -144,15 +144,13 @@ public class ViewPlaylistScreen extends Screen {
                     WaterPlayer.log(msg, Level.ERROR);
                 }
             }
-        }).setPosition(x, y).setSize(size, 20).setActive(false).build());
+        }).start()).setPosition(x, y).setSize(size, 20).setActive(false).build());
         y += 25;
 
         addRenderableWidget(new ButtonBuilder(CommonComponents.GUI_BACK, (e) -> onClose()).setPosition(x, y).setSize(size - 25, 20).build());
-        addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.playlist.play"), (s) -> {
-//            WaterPlayer.player.loadMusic(webPlaylist == null ? String.format("playlist:%s", playlist.fileName) : String.format("wplayer:%s", webPlaylist.url), false);
-            WaterPlayer.player.getTrackScheduler().changeQueue(new PlaylistQueue(this.playlist));
-        })
-                .setSprite(PLAY).setPosition(x + size - 20, y).setSize(20, 20).build());
+        addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.playlist.play"), (s) ->
+            new Thread(() -> WaterPlayer.player.getTrackScheduler().changeQueue(new PlaylistQueue(this.playlist))).start()
+        ).setSprite(PLAY).setPosition(x + size - 20, y).setSize(20, 20).build());
         y+= 25;
         maxY = y;
     }

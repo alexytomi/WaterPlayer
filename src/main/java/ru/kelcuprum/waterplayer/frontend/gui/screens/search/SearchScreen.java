@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
-import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.config.Localization;
 import ru.kelcuprum.alinlib.gui.Colors;
 import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
@@ -33,7 +32,6 @@ import ru.kelcuprum.waterplayer.frontend.gui.components.TrackButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.kelcuprum.alinlib.gui.GuiUtils.DEFAULT_WIDTH;
 import static ru.kelcuprum.alinlib.gui.Icons.RESET;
 
 public class SearchScreen extends Screen {
@@ -86,9 +84,7 @@ public class SearchScreen extends Screen {
         int x = 10;
         int size = 200;
         addRenderableWidget(new TextBox(x, 5, size, 20, title, true));
-
         request = (EditBox) new EditBoxBuilder(Component.translatable("waterplayer.search.query")).setPosition(x+25, 35).setSize(size-25, 20).build();
-//                new EditString(x + 25, 40, size - 25, 20, Component.translatable("waterplayer.search.query"));
         request.setValue(requestValue);
         request.setResponder((s) -> requestValue = s);
         request.setMaxLength(Integer.MAX_VALUE);
@@ -106,8 +102,10 @@ public class SearchScreen extends Screen {
             }
             WaterPlayer.config.setString("SEARCH.LAST", requestValue);
             if(services[searchService].startsWith("wpsearch:")){
-                playlists = WaterPlayerAPI.searchPlaylists(requestValue);
-                rebuildWidgetsList();
+                new Thread(()-> {
+                    playlists = WaterPlayerAPI.searchPlaylists(requestValue);
+                    rebuildWidgetsList();
+                }).start();
             } else {
                 String value = services[searchService] + requestValue;
                 load(value);
