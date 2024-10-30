@@ -36,6 +36,13 @@
   "waterplayer.playlist.save": "Save Playlist",
   "waterplayer.playlist.edit_button": "Edit Playlist",
   "waterplayer.playlist.is_empty": "<--- HEY! You have an empty playlist! Fix it!",
+  "waterplayer.playlist.you_not_author": "You cannot publish a playlist under a name other than your own name",
+  "waterplayer.playlist.web.deleted": "The playlist “%1$s” (%2$s) has been deleted",
+  "waterplayer.playlist.web.not_deleted": "The playlist was not deleted, look at the logs",
+  "waterplayer.playlist.web.delete": "Remove a playlist from the API",
+  "waterplayer.playlist.web.delete.title": "Remove a playlist from the API?",
+  "waterplayer.playlist.web.delete.description": "ARE YOU SURE YOU WANT TO REMOVE THE PLAYLIST FROM THE PUBLIC LIBRARY?",
+  "waterplayer.playlist.web.delete.description.details": "“%1$s” (%2$s)",
 
   "waterplayer.playlist.create.illegal_characters": "Illegal Characters!",
 

@@ -10,6 +10,7 @@ import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.WebAPI;
 import ru.kelcuprum.alinlib.config.Config;
 import ru.kelcuprum.alinlib.gui.toast.ToastBuilder;
+import ru.kelcuprum.alinlib.info.Player;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.backend.exception.AuthException;
 import ru.kelcuprum.waterplayer.backend.exception.WebPlaylistException;
@@ -39,6 +40,8 @@ public class WaterPlayerAPI {
         url = url+(url.contains("?") ? "&" : "?")+"version=2.1";
         return url;
     }
+
+    // - Fucking shit
 
     @Async.Execute
     public static boolean serverEnable(){
@@ -91,6 +94,48 @@ public class WaterPlayerAPI {
         }
     }
 
+    // - Moderation
+    public static boolean isModerator(){
+        try {
+            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(getURL("/user")))
+                    .header("Authorization", "Bearer "+AlinLib.MINECRAFT.getUser().getAccessToken());
+            JsonObject json = getJsonObject(builder);
+            if(json.has("error")){
+                if (json.getAsJsonObject("error").get("code").getAsNumber().intValue() != 401) {
+                    String msg = json.getAsJsonObject("error").has("message") ? json.getAsJsonObject("error").get("message").getAsString() : json.getAsJsonObject("error").get("codename").getAsString();
+                    WaterPlayer.log(msg, Level.ERROR);
+                }
+                return false;
+            }
+            return json.has("moderator") && json.get("moderator").getAsBoolean();
+        } catch (Exception e){
+            WaterPlayer.log(e.getMessage() == null ? e.getClass().getName() : e.getMessage(), Level.ERROR);
+            return false;
+        }
+    }
+
+    public static boolean deletePlaylist(String id){
+        try {
+            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(getURL(String.format("/playlist/%s", id))))
+                    .DELETE()
+                    .header("Authorization", "Bearer "+AlinLib.MINECRAFT.getUser().getAccessToken());
+            JsonObject json = getJsonObject(builder);
+            if(json.has("error")){
+                if (json.getAsJsonObject("error").get("code").getAsNumber().intValue() != 401) {
+                    String msg = json.getAsJsonObject("error").has("message") ? json.getAsJsonObject("error").get("message").getAsString() : json.getAsJsonObject("error").get("codename").getAsString();
+                    WaterPlayer.log(msg, Level.ERROR);
+                }
+                return false;
+            }
+            return json.has("status") && json.get("status").getAsBoolean();
+        } catch (Exception e){
+            WaterPlayer.log(e.getMessage() == null ? e.getClass().getName() : e.getMessage(), Level.ERROR);
+            return false;
+        }
+    }
+
+    // - Playlists
+
     public static Playlist getPlaylist(String url, boolean save) throws WebPlaylistException, IOException, InterruptedException {
         try {
             JsonObject data = getJsonObject(url);
@@ -106,10 +151,10 @@ public class WaterPlayerAPI {
             else throw e;
         }
     }
-
     @Async.Execute
     public static String uploadPlaylist(Playlist playlist, String id) throws AuthException, WebPlaylistException {
         if(!isVerified()) throw new AuthException("Your account is not authorized!");
+        else if(!playlist.author.equalsIgnoreCase(Player.getName())) throw new AuthException(Component.translatable("waterplayer.playlist.you_not_author").getString());
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(getURL("/upload")));
             if(config.getBoolean("ENABLE_VERIFY", true)) builder.header("Authorization", "Bearer "+AlinLib.MINECRAFT.getUser().getAccessToken());
@@ -127,7 +172,6 @@ public class WaterPlayerAPI {
             else throw new RuntimeException((e.getMessage() == null ? e.getClass().getName() : e.getMessage()));
         }
     }
-
     public static List<WebPlaylist> searchPlaylists(String query){
         List<WebPlaylist> results = new ArrayList<>();
         if(!config.getBoolean("SEARCH", true)) return results;
@@ -153,7 +197,7 @@ public class WaterPlayerAPI {
         }
     }
 
-
+    // - Track information
 
     public static HashMap<String, JsonObject> urlsArtworks = new HashMap<>();
     public static JsonObject getTrackInfo(AudioTrack track, boolean onlyAuthor){
@@ -214,6 +258,9 @@ public class WaterPlayerAPI {
             return "";
         }
     }
+
+    // - Parse
+
     protected static String uriEncode(String uri){
         return URLEncoder.encode(uri, StandardCharsets.UTF_8);
     }

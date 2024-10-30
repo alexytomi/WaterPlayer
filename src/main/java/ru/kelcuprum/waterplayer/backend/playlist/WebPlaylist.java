@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.apache.logging.log4j.Level;
 import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.waterplayer.WaterPlayer;
+import ru.kelcuprum.waterplayer.backend.WaterPlayerAPI;
 import ru.kelcuprum.waterplayer.backend.exception.WebPlaylistException;
 import ru.kelcuprum.waterplayer.backend.sources.waterplayer.WaterPlayerPlaylist;
 
@@ -42,6 +43,10 @@ public class WebPlaylist {
             throw new WebPlaylistException("External error: " + (e.getMessage() == null ? e.getClass().getName() : e.getMessage()));
         }
         return this;
+    }
+
+    public boolean delete(){
+        return WaterPlayerAPI.deletePlaylist(url);
     }
 
     public List<AudioTrack> getTracks(){

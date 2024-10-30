@@ -26,6 +26,7 @@ import static ru.kelcuprum.waterplayer.frontend.gui.TextureHelper.toBufferedImag
 public class Playlist {
     public String title;
     public String author;
+    public Boolean isPublic;
     public JsonArray urlsJSON;
     public List<String> urls = new ArrayList<>();
     public Path path;
@@ -48,6 +49,7 @@ public class Playlist {
         author = data.has("author") ? data.get("author").getAsString() : Player.getName();
         urlsJSON = data.has("urls") ? data.get("urls").getAsJsonArray() : GsonHelper.parseArray("[\"https://www.youtube.com/watch?v=2bjBl-nX1oc\"]");
         icon = data.has("icon") ? data.get("icon").getAsString() : null;
+        isPublic = data.has("public") && data.get("public").getAsBoolean();
         for(int i = 0; i < urlsJSON.size(); i++){
             urls.add(urlsJSON.get(i).getAsString());
         }
@@ -110,6 +112,7 @@ public class Playlist {
         JsonObject data = new JsonObject();
         data.addProperty("title", title);
         data.addProperty("author", author);
+        data.addProperty("public", isPublic);
         if(icon != null) data.addProperty("icon", icon);
         data.add("urls", getUrlsJSON());
         return data;

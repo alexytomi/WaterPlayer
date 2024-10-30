@@ -38,9 +38,9 @@ import ru.kelcuprum.waterplayer.frontend.gui.screens.config.PlaylistsScreen;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.kelcuprum.alinlib.gui.Icons.*;
-import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.NO_PLAYLIST_ICON;
-import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.PLAY;
+import static ru.kelcuprum.alinlib.gui.Icons.DONT;
+import static ru.kelcuprum.alinlib.gui.Icons.CLOWNFISH;
+import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.*;
 
 public class ViewPlaylistScreen extends Screen {
     @NotNull
@@ -110,6 +110,12 @@ public class ViewPlaylistScreen extends Screen {
                 }
                 AlinLib.MINECRAFT.setScreen(new ViewPlaylistScreen(parent, playlist));
             }).setPosition(x, y).setSize(size, 20).build());
+            if(WaterPlayerAPI.isModerator()){
+                y+=25;
+                addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.playlist.web.delete"), (s) ->
+                        this.minecraft.setScreen(new ConfirmDeletePlaylist(this, webPlaylist, (b) -> onClose())))
+                        .setPosition(x, y).setSize(size, 20).build());
+            }
         }
         y += 25;
         upload = (Button) addRenderableWidget(new ButtonBuilder(Component.translatable(isCreatedLink ? "waterplayer.playlist.copy_link" : "waterplayer.playlist.upload"), (e) -> {

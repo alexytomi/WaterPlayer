@@ -37,6 +37,13 @@
   "waterplayer.playlist.save": "Сохранить плейлист",
   "waterplayer.playlist.edit_button": "Редактировать плейлист",
   "waterplayer.playlist.is_empty": "<--- ХЕЙ! У вас пустой плейлист! Исправьте это!",
+  "waterplayer.playlist.you_not_author": "Вы не можете опубликовать плейлист под другим именем, кроме своего собственного",
+  "waterplayer.playlist.web.deleted": "Плейлист «%1$s» (%2$s) был удален",
+  "waterplayer.playlist.web.not_deleted": "Плейлист не был удален, посмотрите логи",
+  "waterplayer.playlist.web.delete": "Удалить плейлист из API",
+  "waterplayer.playlist.web.delete.title": "Удалить плейлист из API?",
+  "waterplayer.playlist.web.delete.description": "ВЫ УВЕРЕНЫ, ЧТО ХОТИТЕ УДАЛИТЬ ПЛЕЙЛИСТ ИЗ ПУБЛИЧНОЙ БИБЛИОТЕКИ?",
+  "waterplayer.playlist.web.delete.description.details": "“%1$s” (%2$s)",
 
   "waterplayer.playlist.create.illegal_characters": "Некорректные символы!",
 
