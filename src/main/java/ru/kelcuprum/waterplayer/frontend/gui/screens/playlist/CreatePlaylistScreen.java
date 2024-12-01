@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.Level;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.toast.ToastBuilder;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.backend.WaterPlayerAPI;
@@ -35,7 +35,7 @@ public class CreatePlaylistScreen extends Screen {
         int x = width/2;
         int y = height/2;
 
-        addRenderableWidget(new TextBox(x-150, 20, 300, 20, title, true));
+        addRenderableWidget(new TextBuilder(title).setPosition(x-150, 20).setSize(300, 20).build());
         addRenderableWidget(new EditBoxBuilder(Component.translatable("waterplayer.playlist.create.filename"), (s) -> fileName = s)
                 .setSecret(false)
                 .setPosition(x-150, y-10)

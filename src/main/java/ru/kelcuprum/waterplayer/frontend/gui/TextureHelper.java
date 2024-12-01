@@ -20,10 +20,7 @@ import ru.kelcuprum.waterplayer.WaterPlayer;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,6 +30,7 @@ import java.util.HashMap;
 
 import static org.apache.logging.log4j.core.config.plugins.convert.Base64Converter.parseBase64Binary;
 import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.*;
+import static ru.kelcuprum.waterplayer.frontend.gui.TextureHelper.Type.*;
 
 public class TextureHelper {
     public static HashMap<String, ResourceLocation> resourceLocationMap = new HashMap<>();
@@ -41,14 +39,25 @@ public class TextureHelper {
     public static JsonArray map = new JsonArray();
 
 
-    public static HashMap<File, ResourceLocation> resourceLocationMap$file = new HashMap<>();
     public static HashMap<File, Boolean> urls$file = new HashMap<>();
     public static HashMap<File, DynamicTexture> urlsTextures$file = new HashMap<>();
 
 
-    public static HashMap<String, ResourceLocation> resourceLocationMap$Base64 = new HashMap<>();
     public static HashMap<String, Boolean> urls$Base64 = new HashMap<>();
     public static HashMap<String, DynamicTexture> urlsTextures$Base64 = new HashMap<>();
+
+    public static HashMap<ResourceLocation, BufferedImage> dynamicTextures = new HashMap<>();
+
+    public enum Type {
+        INTERNET(0),
+        FILE(1),
+        BASE64(2);
+        final int type;
+        Type(Integer color) {
+            this.type = color;
+        }
+    }
+
 
     // Internet
     public static ResourceLocation getTexture(String url, String id) {
@@ -58,14 +67,14 @@ public class TextureHelper {
             if (!urls.getOrDefault(id, false)) {
                 urls.put(id, true);
                 String finalId = id;
-                new Thread(() -> registerTexture(url, finalId, AlinLib.MINECRAFT.getTextureManager(), GuiUtils.getResourceLocation("waterplayer", finalId))).start();
+                new Thread(() -> registerTexture(Type.INTERNET ,url, finalId, AlinLib.MINECRAFT.getTextureManager(), GuiUtils.getResourceLocation("waterplayer", finalId))).start();
             }
             return NO_ICON;
         }
     }
 
     @Async.Execute
-    public static void registerTexture(String url, String id, TextureManager textureManager, ResourceLocation textureId) {
+    public static void registerTexture(Type type, String url, String id, TextureManager textureManager, ResourceLocation textureId) {
         WaterPlayer.log(String.format("REGISTER: %s %s", url, id), Level.DEBUG);
         DynamicTexture texture;
         if (urlsTextures.containsKey(url)) {
@@ -79,19 +88,36 @@ public class TextureHelper {
             File textureFile = getTextureFile(id);
             boolean isFileExists = textureFile.exists();
             try {
-                BufferedImage bufferedImage = isFileExists ? ImageIO.read(getTextureFile(id)) : ImageIO.read(new URL(url));
+                BufferedImage bufferedImage;
+                if (isFileExists) {
+                    bufferedImage = ImageIO.read(getTextureFile(id));
+                } else if(type == FILE){
+                    File file = new File(url);
+                    AudioFile f = AudioFileIO.read(file);
+                    if (!f.getTag().getArtworkList().isEmpty()) {
+                        bufferedImage = (BufferedImage) f.getTag().getFirstArtwork().getImage();
+                    } else {
+                        resourceLocationMap.put(id, FILE_ICON);
+                        return;
+                    }
+                } else if(type == BASE64){
+                    byte[] imageBytes = parseBase64Binary(url);
+                    bufferedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+                } else bufferedImage = ImageIO.read(new URL(url));
                 if (bufferedImage.getWidth() > bufferedImage.getHeight()) {
                     int x = (bufferedImage.getWidth() - bufferedImage.getHeight()) / 2;
                     bufferedImage = bufferedImage.getSubimage(x, 0, bufferedImage.getHeight(), bufferedImage.getHeight());
                 }
-                BufferedImage scaleImage = toBufferedImage(bufferedImage.getScaledInstance(128, 128, 2));
+                int size = Math.min(bufferedImage.getHeight(), 512);
+                BufferedImage scaleImage = toBufferedImage(bufferedImage.getScaledInstance(size, size, 2));
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 ImageIO.write(scaleImage, "png", byteArrayOutputStream);
-                byte[] bytesOfImage = byteArrayOutputStream.toByteArray();
-                image = NativeImage.read(bytesOfImage);
+                InputStream is = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                image = NativeImage.read(is);
+                dynamicTextures.put(textureId, scaleImage);
                 if (!isFileExists) {
                     Files.createDirectories(textureFile.toPath().getParent());
-                    Files.write(textureFile.toPath(), bytesOfImage);
+                    Files.write(textureFile.toPath(), byteArrayOutputStream.toByteArray());
                 }
             } catch (Exception e) {
                 WaterPlayer.log("Error loading image from URL: " + url + " - " + e.getMessage());
@@ -113,82 +139,25 @@ public class TextureHelper {
     // File
     public static ResourceLocation getTexture$File(File file, String id) {
         id = formatUrls(id.toLowerCase());
-        if (resourceLocationMap$file.containsKey(file)) {
-            return resourceLocationMap$file.get(file);
+        if (resourceLocationMap.containsKey(id)) {
+            return resourceLocationMap.get(id);
         } else {
             if (!urls$file.getOrDefault(file, false)) {
                 urls$file.put(file, true);
                 String finalId = id;
-                new Thread(() -> registerTexture$File(file, finalId, AlinLib.MINECRAFT.getTextureManager(), GuiUtils.getResourceLocation("waterplayer", finalId))).start();
+                new Thread(() -> registerTexture(FILE, file.toPath().toString(), finalId, AlinLib.MINECRAFT.getTextureManager(), GuiUtils.getResourceLocation("waterplayer", finalId))).start();
             }
             return FILE_ICON;
         }
     }
 
-    @Async.Execute
-    public static void registerTexture$File(File file, String id, TextureManager textureManager, ResourceLocation textureId) {
-        WaterPlayer.log(String.format("REGISTER: %s", file.toPath()), Level.DEBUG);
-        DynamicTexture texture;
-        if (urlsTextures$file.containsKey(file)) {
-            JsonObject data = new JsonObject();
-            data.addProperty("url", file.toPath().toString());
-            data.addProperty("id", id);
-            if (!map.contains(data)) map.add(data);
-            texture = urlsTextures$file.get(file);
-        } else {
-            NativeImage image;
-            try {
-                File textureFile = getTextureFile(id);
-                boolean isFileExists = textureFile.exists();
-                BufferedImage bufferedImage;
-                if (isFileExists) {
-                    bufferedImage = ImageIO.read(getTextureFile(id));
-                } else {
-                    AudioFile f = AudioFileIO.read(file);
-                    if (!f.getTag().getArtworkList().isEmpty()) {
-                        bufferedImage = (BufferedImage) f.getTag().getFirstArtwork().getImage();
-                    } else {
-                        resourceLocationMap$file.put(file, FILE_ICON);
-                        return;
-                    }
-                }
-                if (bufferedImage.getWidth() > bufferedImage.getHeight()) {
-                    int x = (bufferedImage.getWidth() - bufferedImage.getHeight()) / 2;
-                    bufferedImage = bufferedImage.getSubimage(x, 0, bufferedImage.getHeight(), bufferedImage.getHeight());
-                }
-                BufferedImage scaleImage = toBufferedImage(bufferedImage.getScaledInstance(128, 128, 2));
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                ImageIO.write(scaleImage, "png", byteArrayOutputStream);
-                byte[] bytesOfImage = byteArrayOutputStream.toByteArray();
-                image = NativeImage.read(bytesOfImage);
-
-                if (!isFileExists) {
-                    Files.createDirectories(textureFile.toPath().getParent());
-                    Files.write(textureFile.toPath(), bytesOfImage);
-                }
-            } catch (Exception e) {
-                WaterPlayer.log("Error loading image from URL: " + file.toPath() + " - " + e.getMessage());
-                resourceLocationMap$file.put(file, FILE_ICON);
-                return;
-            }
-            texture = new DynamicTexture(image);
-        }
-        if (textureManager != null) {
-            textureManager.register(textureId, texture);
-            resourceLocationMap$file.put(file, textureId);
-            JsonObject data = new JsonObject();
-            data.addProperty("url", file.toPath().toString());
-            data.addProperty("id", id);
-            if (!map.contains(data)) map.add(data);
-        }
-    }
 
     public static void removeTexture$File(File file) {
         String id = formatUrls("local_" + file.getAbsolutePath());
         if (urlsTextures$file.containsKey(file))
             urlsTextures$file.remove(file);
-        if (resourceLocationMap$file.containsKey(file))
-            resourceLocationMap$file.remove(file);
+        if (resourceLocationMap.containsKey(file.toPath().toString()))
+            resourceLocationMap.remove(file.toPath().toString());
         if (urls$file.containsKey(file))
             urls$file.remove(file);
         File fileIcon = getTextureFile(id);
@@ -203,122 +172,29 @@ public class TextureHelper {
 
     public static ResourceLocation getTexture$Base64(String base, String id) {
         id = formatUrls(id.toLowerCase());
-        if (resourceLocationMap$Base64.containsKey(id)) {
-            return resourceLocationMap$Base64.get(id);
+        if (resourceLocationMap.containsKey(id)) {
+            return resourceLocationMap.get(id);
         } else {
             if (!urls$Base64.getOrDefault(id, false)) {
                 urls$Base64.put(id, true);
                 String finalId = id;
-                new Thread(() -> registerTexture$Base64(base, finalId, AlinLib.MINECRAFT.getTextureManager(), GuiUtils.getResourceLocation("waterplayer", finalId))).start();
+                new Thread(() -> registerTexture(BASE64, base, finalId, AlinLib.MINECRAFT.getTextureManager(), GuiUtils.getResourceLocation("waterplayer", finalId))).start();
             }
             return FILE_ICON;
-        }
-    }
-
-    @Async.Execute
-    public static void registerTexture$Base64(String base, String id, TextureManager textureManager, ResourceLocation textureId) {
-        WaterPlayer.log(String.format("REGISTER: %s", id), Level.DEBUG);
-        DynamicTexture texture;
-        if (urlsTextures$Base64.containsKey(base)) {
-            JsonObject data = new JsonObject();
-            data.addProperty("url", "base64");
-            data.addProperty("id", id);
-            if (!map.contains(data)) map.add(data);
-            texture = urlsTextures$Base64.get(base);
-        } else {
-            NativeImage image;
-            try {
-                File textureFile = getTextureFile(id);
-                boolean isFileExists = textureFile.exists();
-                BufferedImage bufferedImage;
-                if (isFileExists) {
-                    bufferedImage = ImageIO.read(getTextureFile(id));
-                } else {
-                    byte[] imageBytes = parseBase64Binary(base);
-                    bufferedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
-                }
-                if (bufferedImage.getWidth() > bufferedImage.getHeight()) {
-                    int x = (bufferedImage.getWidth() - bufferedImage.getHeight()) / 2;
-                    bufferedImage = bufferedImage.getSubimage(x, 0, bufferedImage.getHeight(), bufferedImage.getHeight());
-                }
-                BufferedImage scaleImage = toBufferedImage(bufferedImage.getScaledInstance(128, 128, 2));
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                ImageIO.write(scaleImage, "png", byteArrayOutputStream);
-                byte[] bytesOfImage = byteArrayOutputStream.toByteArray();
-                image = NativeImage.read(bytesOfImage);
-
-                if (!isFileExists) {
-                    Files.createDirectories(textureFile.toPath().getParent());
-                    Files.write(textureFile.toPath(), bytesOfImage);
-                }
-            } catch (Exception e) {
-                WaterPlayer.log("Error loading image from URL: " + id + " - " + e.getMessage());
-                resourceLocationMap$Base64.put(id, NO_PLAYLIST_ICON);
-                return;
-            }
-            texture = new DynamicTexture(image);
-        }
-        if (textureManager != null) {
-            textureManager.register(textureId, texture);
-            resourceLocationMap$Base64.put(id, textureId);
-            JsonObject data = new JsonObject();
-            data.addProperty("url", "base64");
-            data.addProperty("id", id);
-            if (!map.contains(data)) map.add(data);
-        }
-    }
-
-    public static void registerTexture$Base64(String id, TextureManager textureManager, ResourceLocation textureId) {
-        WaterPlayer.log(String.format("REGISTER: %s", id), Level.DEBUG);
-        DynamicTexture texture;
-        NativeImage image;
-        try {
-            File textureFile = getTextureFile(id);
-            boolean isFileExists = textureFile.exists();
-            BufferedImage bufferedImage;
-            if (isFileExists) {
-                bufferedImage = ImageIO.read(getTextureFile(id));
-                if (bufferedImage.getWidth() > bufferedImage.getHeight()) {
-                    int x = (bufferedImage.getWidth() - bufferedImage.getHeight()) / 2;
-                    bufferedImage = bufferedImage.getSubimage(x, 0, bufferedImage.getHeight(), bufferedImage.getHeight());
-                }
-                BufferedImage scaleImage = toBufferedImage(bufferedImage.getScaledInstance(128, 128, 2));
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                ImageIO.write(scaleImage, "png", byteArrayOutputStream);
-                byte[] bytesOfImage = byteArrayOutputStream.toByteArray();
-                image = NativeImage.read(bytesOfImage);
-            } else {
-                resourceLocationMap$Base64.put(id, NO_PLAYLIST_ICON);
-                return;
-            }
-        } catch (Exception e) {
-            WaterPlayer.log("Error loading image from URL: " + id + " - " + e.getMessage());
-            resourceLocationMap$Base64.put(id, NO_PLAYLIST_ICON);
-            return;
-        }
-        texture = new DynamicTexture(image);
-        if (textureManager != null) {
-            textureManager.register(textureId, texture);
-            resourceLocationMap$Base64.put(id, textureId);
-            JsonObject data = new JsonObject();
-            data.addProperty("url", "base64");
-            data.addProperty("id", id);
-            if (!map.contains(data)) map.add(data);
         }
     }
 
     public static void remove$Base64(String id, String base) {
         if (base != null) urlsTextures$Base64.remove(base);
         urls$Base64.remove(id);
-        resourceLocationMap$Base64.remove(id);
+        resourceLocationMap.remove(id);
         File file = getTextureFile(id);
         if (file.exists()) file.delete();
         JsonObject data = new JsonObject();
-        data.addProperty("url", "base64");
+        data.addProperty("url", base);
         data.addProperty("id", id);
         map.remove(data);
     }
-
 
     public static File getTextureFile(String url) {
         return new File(WaterPlayer.getPath() + "/textures/" + url + ".png");
@@ -342,10 +218,10 @@ public class TextureHelper {
                 JsonObject data = json.getAsJsonObject();
                 ResourceLocation l = GuiUtils.getResourceLocation("waterplayer", data.get("id").getAsString());
                 if (new File(data.get("url").getAsString()).exists())
-                    registerTexture$File(new File(data.get("url").getAsString()), data.get("id").getAsString(), textureManager, l);
-                else if (data.get("url").getAsString().startsWith("base64"))
-                    registerTexture$Base64(data.get("id").getAsString(), textureManager, l);
-                else registerTexture(data.get("url").getAsString(), data.get("id").getAsString(), textureManager, l);
+                    registerTexture(FILE, data.get("url").getAsString(), data.get("id").getAsString(), textureManager, l);
+                else if (data.get("id").getAsString().startsWith("playlist-") || data.get("id").getAsString().startsWith("webplaylist-"))
+                    registerTexture(BASE64, data.get("url").getAsString(), data.get("id").getAsString(), textureManager, l);
+                else registerTexture(Type.INTERNET, data.get("url").getAsString(), data.get("id").getAsString(), textureManager, l);
             }
         } catch (Exception e) {
             WaterPlayer.log("MAP ERROR!", Level.ERROR);
@@ -386,7 +262,7 @@ public class TextureHelper {
     // -=-=-=-=-=-=-=-=-=- //
     public static void removePlaylistsIconCache() {
         File directory = new File(WaterPlayer.getPath() + "/textures");
-        resourceLocationMap$Base64.clear();
+        resourceLocationMap.clear();
         urls$Base64.clear();
         urlsTextures$Base64.clear();
         List<JsonElement> removed = new ArrayList<>();
@@ -406,7 +282,6 @@ public class TextureHelper {
         resourceLocationMap.clear();
         urls.clear();
         urlsTextures.clear();
-        resourceLocationMap$file.clear();
         urls$file.clear();
         urlsTextures$file.clear();
         List<JsonElement> removed = new ArrayList<>();

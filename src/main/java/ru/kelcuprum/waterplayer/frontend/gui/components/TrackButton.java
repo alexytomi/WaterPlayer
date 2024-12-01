@@ -56,18 +56,15 @@ public class TrackButton extends Button {
         }
     }
 
-    protected void renderScrollingString(GuiGraphics guiGraphics, Font font, Component message, int x, int y, int color) {
-        int k = this.getX() + x;
-        int l = this.getX() + this.getWidth() - x;
+    protected void renderScrollingString(GuiGraphics guiGraphics, Font font, Component message, int y) {
+        int k = this.getX() + 5;
+        int l = this.getX() + this.getWidth() - 5;
         if(!isShort) k+=40;
-        renderScrollingString(guiGraphics, font, message, k, y, l, y+font.lineHeight, color);
+        renderScrollingString(guiGraphics, font, message, k, y, l, y+font.lineHeight, -1);
     }
 
     protected void renderString(GuiGraphics guiGraphics, String text, int x, int y) {
-        if (getWidth() - 50 < AlinLib.MINECRAFT.font.width(text)) {
-            renderScrollingString(guiGraphics, AlinLib.MINECRAFT.font, Component.literal(text), 5, y-1, -1);
-        } else {
-            guiGraphics.drawString(AlinLib.MINECRAFT.font, text, x, y, -1);
-        }
+        if (getWidth() - 50 < AlinLib.MINECRAFT.font.width(text)) renderScrollingString(guiGraphics, AlinLib.MINECRAFT.font, Component.literal(text), y-1);
+        else guiGraphics.drawString(AlinLib.MINECRAFT.font, text, x, y, -1);
     }
 }

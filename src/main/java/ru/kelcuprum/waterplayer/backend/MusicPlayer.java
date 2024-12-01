@@ -33,10 +33,7 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AllocatingAudioFrameBuffe
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.clients.*;
-import net.minecraft.Util;
-import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.Level;
-import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.config.Config;
 import ru.kelcuprum.alinlib.config.Localization;
 import ru.kelcuprum.waterplayer.WaterPlayer;
@@ -121,15 +118,18 @@ public class MusicPlayer {
             return Collections.singletonList(filter);
         });
     }
-
+    public YoutubeAudioSourceManager youtube;
     private void registerSources() {
         Config config = WaterPlayer.config;
         WaterPlayerSource wps = new WaterPlayerSource();
         lyricsManager.registerLyricsManager(wps);
 
         if (config.getBoolean("ENABLE_YOUTUBE", true)) {
-            final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true, new MusicWithThumbnail(), new AndroidMusicWithThumbnail(), new TvHtml5EmbeddedWithThumbnail());
+            youtube = new YoutubeAudioSourceManager(true, new MusicWithThumbnail(), new WebEmbeddedWithThumbnail(), new WebWithThumbnail());
             youtube.setPlaylistPageCount(100);
+            String refreshToken = config.getString("YOUTUBE_REFRESH_TOKEN", "");
+            if(refreshToken.isBlank()) youtube.useOauth2(null, false);
+            else youtube.useOauth2(refreshToken, true);
             audioPlayerManager.registerSourceManager(youtube);
             AudioSearchManager ytSearch = new YoutubeSearchManager(() -> audioPlayerManager, "US");
             lyricsManager.registerLyricsManager(new LyricsWithoutException((AudioLyricsManager) ytSearch));
@@ -137,7 +137,7 @@ public class MusicPlayer {
         if (!config.getString("VK_MUSIC_TOKEN", "").isBlank() && config.getBoolean("ENABLE_VK_MUSIC", false)) {
             //#if WALTER == 1
             //$$ config.setBoolean("ENABLE_VK_MUSIC", false);
-            //$$ Util.getPlatform().openUri("https://www.youtube.com/watch?v=PkT0PJwy8mI");
+            //$$ net.minecraft.Util.getPlatform().openUri("https://www.youtube.com/watch?v=PkT0PJwy8mI");
             //$$ throw new RuntimeException("Don't use VK Group products, please, I don't want you to eat shit.");
             //#else
             VkMusicSourceManager vk = new VkMusicSourceManager(config.getString("VK_MUSIC_TOKEN", ""));

@@ -19,8 +19,8 @@ import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBooleanBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.backend.playlist.Playlist;
 import ru.kelcuprum.waterplayer.frontend.gui.TextureHelper;
@@ -97,13 +97,13 @@ public class EditPlaylistScreen extends Screen {
     public void initPanel(){
         int x = 10;
         int size = 200;
-        addRenderableWidget(new TextBox(x, 5, size, 20, Component.translatable("waterplayer.playlist.edit"), true));
+        addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.playlist.edit")).setPosition(x, 5).setSize(size, 20).build());
         int y = 35;
         // x, y, 36, 36, getIcon(), 36, 36,
         icon = (Button) addRenderableWidget(new ButtonBuilder(Component.empty(), (s) -> showOpenFileDialog()).setSprite(getIcon()).setPosition(x, y).setSize(36, 36).build());
 
-        addRenderableWidget(new TextBox(x+41, y, size-41, 18, Component.translatable("waterplayer.playlist.edit.drag_and_drop"), false, (s) -> showOpenFileDialog()));
-        addRenderableWidget(new TextBox(x+41, y+18, size-41, 18, Component.translatable("waterplayer.playlist.edit.drag_and_drop.second"), false, (s) -> showOpenFileDialog()));
+        addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.playlist.edit.drag_and_drop"), (s) -> showOpenFileDialog()).setAlign(TextBuilder.ALIGN.LEFT).setPosition(x+41, y).setSize(size-41, 18).build());
+        addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.playlist.edit.drag_and_drop.second"), (s) -> showOpenFileDialog()).setAlign(TextBuilder.ALIGN.LEFT).setPosition(x+41, y+18).setSize(size-41, 18).build());
         y+=41;
         addRenderableWidget(new EditBoxBuilder(Component.translatable("waterplayer.playlist.title"), (s) -> {
             playlist.title = s;
@@ -143,7 +143,7 @@ public class EditPlaylistScreen extends Screen {
     private List<AbstractWidget> widgets = new ArrayList<>();
     public void initTracks(){
         widgets = new ArrayList<>();
-        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 8, 0, 4, this.height, Component.empty(), scroller -> {
+        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 4, 0, 4, this.height, Component.empty(), scroller -> {
             scroller.innerHeight = 5;
             for (AbstractWidget widget : widgets) {
                 if (widget.visible) {
@@ -153,7 +153,7 @@ public class EditPlaylistScreen extends Screen {
             }
         }));
         int x = 220;
-        widgets.add(new TextBox(x, 5, width - 225, 20, Component.translatable("waterplayer.playlist.urls"), true));
+        widgets.add(new TextBuilder(Component.translatable("waterplayer.playlist.urls")).setPosition(x, 5).setSize(width-225, 20).build());
         int i = 0;
         for (JsonElement element : playlist.getUrlsJSON()) {
             String url = element.getAsString();

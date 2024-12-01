@@ -9,14 +9,12 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
-import ru.kelcuprum.alinlib.config.Localization;
 import ru.kelcuprum.alinlib.gui.Colors;
 import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
-import ru.kelcuprum.alinlib.gui.components.text.MessageBox;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.frontend.gui.components.TrackButton;
 import ru.kelcuprum.waterplayer.frontend.localization.MusicHelper;
@@ -44,7 +42,7 @@ public class HistoryScreen extends Screen {
     public void initPanel() {
         int x = 10;
         int size = 200;
-        addRenderableWidget(new TextBox(x, 5, size, 20, title, true));
+        addRenderableWidget(new TextBuilder(title).setPosition(x, 5).setSize(size, 20).build());
 
         request = (EditBox) new EditBoxBuilder(Component.translatable("waterplayer.search.query")).setPosition(x, 35).setSize(size, 20).build();
         request.setValue(requestValue);
@@ -75,7 +73,7 @@ public class HistoryScreen extends Screen {
     public void initList() {
         widgets = new ArrayList<>();
         int x = 220;
-        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 8, 0, 4, this.height, Component.empty(), scroller -> {
+        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 4, 0, 4, this.height, Component.empty(), scroller -> {
             scroller.innerHeight = 5;
             for (AbstractWidget widget : widgets) {
                 if (widget.visible) {
@@ -85,10 +83,10 @@ public class HistoryScreen extends Screen {
                 } else widget.setY(-widget.getHeight());
             }
         }));
-        widgets.add(new TextBox(x, 5, width - 220, 20, Component.translatable("waterplayer.search.result"), true));
+        widgets.add(new TextBuilder(Component.translatable("waterplayer.search.result")).setPosition(x, 5).setSize(width - 220, 20).build());
         List<AudioTrack> list = getTracks();
         if (list.isEmpty())
-            widgets.add(new MessageBox(x, 20, width - 220, 20, Component.translatable("waterplayer.search.not_found"), true));
+            widgets.add(new TextBuilder(Component.translatable("waterplayer.search.not_found")).setType(TextBuilder.TYPE.MESSAGE).setPosition(x, 20).setSize(width - 220, 20).build());
         else for (AudioTrack track : list) widgets.add(new TrackButton(x, 20, width - 220, track, this, false));
 
         int i = 0;

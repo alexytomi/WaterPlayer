@@ -16,11 +16,15 @@ import ru.kelcuprum.alinlib.api.events.client.ClientTickEvents;
 import ru.kelcuprum.alinlib.api.events.client.ScreenEvents;
 import ru.kelcuprum.alinlib.api.events.client.GuiRenderEvents;
 import ru.kelcuprum.waterplayer.WaterPlayer;
+import ru.kelcuprum.waterplayer.frontend.gui.TextureHelper;
 import ru.kelcuprum.waterplayer.frontend.localization.MusicHelper;
 
+import java.awt.image.BufferedImage;
+import java.util.*;
 import java.util.List;
 
 import static ru.kelcuprum.alinlib.gui.Colors.*;
+import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.NO_ICON;
 
 public class OverlayHandler implements GuiRenderEvents, ClientTickEvents.StartTick, ScreenEvents.ScreenRender {
     private final List<FormattedCharSequence> texts = new ObjectArrayList<>();
@@ -98,17 +102,17 @@ public class OverlayHandler implements GuiRenderEvents, ClientTickEvents.StartTi
                         (left ? 5 : guiGraphics.guiWidth() - 5) + i, (top ? 5 + i1 : guiGraphics.guiHeight() - 9),
                         0x7f000000
                 );
-                int state = isPause ? CLOWNFISH : isLive ? GROUPIE : SEADRIVE;
+                int state = getBarColor();
                 guiGraphics.fill(
                         left ? 5 : guiGraphics.guiWidth() - 5, (top ? 5 + i1 : guiGraphics.guiHeight() - 6) + 1,
                         (left ? 5 : guiGraphics.guiWidth() - 5) + i, (top ? 5 + i1 : guiGraphics.guiHeight() - 11) + 3,
-                        state - 0x7f000000
+                        0x7f000000
                 );
 
                 guiGraphics.fill(
                         left ? 5 : guiGraphics.guiWidth() - 15 - mx, (top ? 5 + i1 : guiGraphics.guiHeight() - 6) + 1,
                         (int) ((left ? 5 : guiGraphics.guiWidth() - 15 - mx) + (left ? i * v : (i * -1) * v)), (top ? 5 + i1 : guiGraphics.guiHeight() - 11) + 3,
-                        state - 0x7f000000
+                        state
                 );
 
                 for (FormattedCharSequence text : texts) {
@@ -146,5 +150,74 @@ public class OverlayHandler implements GuiRenderEvents, ClientTickEvents.StartTi
         if (!WaterPlayer.config.getBoolean("ENABLE_OVERLAY", true)) return;
         int pos = WaterPlayer.config.getNumber("OVERLAY.POSITION", 0).intValue();
         render(guiGraphics, pos);
+    }
+
+    public int getBarColor(){
+        AudioTrack audio = WaterPlayer.player.getAudioPlayer().getPlayingTrack();
+        return isPause ? CLOWNFISH : isLive ? GROUPIE : !WaterPlayer.config.getBoolean("OVERLAY.ACCENT_COLOR", false) || audio == null ? SEADRIVE : switch (MusicHelper.getTitle(audio)){
+            // MiatriSs
+            case "HEX OF PINK FF006E" -> 0xFFFF006E;
+            default -> getCommonColor(audio);
+        };
+    }
+    public static HashMap<AudioTrack, Integer> commonColors = new HashMap<AudioTrack, Integer>();
+    public static int getCommonColor(AudioTrack track){
+        if(track == null) return SEADRIVE;
+        if(MusicHelper.getThumbnail(track) == NO_ICON) return SEADRIVE;
+        if(commonColors.containsKey(track)) return commonColors.get(track);
+        BufferedImage image = TextureHelper.dynamicTextures.get(MusicHelper.getThumbnail(track));
+        if(image == null) return SEADRIVE;
+        int height = image.getHeight();
+        int width = image.getWidth();
+        HashMap<Integer, Integer> m = new HashMap();
+        for(int i=0; i < height ; i++)
+        {
+            for(int j=0; j < width ; j++)
+            {
+                int rgb = image.getRGB(j, i);
+                int[] rgbArr = getRGBArr(rgb);
+                // Filter out grays....
+                if (!notCorrect(rgbArr)) {
+                    Integer counter = m.get(rgb);
+                    if (counter == null)
+                        counter = 0;
+                    counter++;
+                    m.put(rgb, counter);
+                }
+            }
+        }
+        int color = getMostCommonColour(m);;
+        commonColors.put(track, color);
+        return color;
+    }
+
+    // Если у вас IDE жалуется на это, то он долбаеб конченый
+    public static int getMostCommonColour(HashMap<Integer, Integer> map) {
+        LinkedList list = new LinkedList(map.entrySet());
+        if(list.isEmpty()) return SEADRIVE;
+        list.sort((o1, o2) -> ((Comparable) ((Map.Entry<?, ?>) (o1)).getValue())
+                .compareTo(((Map.Entry) (o2)).getValue()));
+        Map.Entry<Integer, Integer> me = (Map.Entry<Integer, Integer>) list.getLast();
+        return me.getKey();
+    }
+
+    public static int[] getRGBArr(int pixel) {
+        int alpha = (pixel >> 24) & 0xff;
+        int red = (pixel >> 16) & 0xff;
+        int green = (pixel >> 8) & 0xff;
+        int blue = (pixel) & 0xff;
+        return new int[]{red,green,blue};
+
+    }
+    public static boolean notCorrect(int[] rgbArr) {
+        int rgDiff = rgbArr[0] - rgbArr[1];
+        int rbDiff = rgbArr[0] - rgbArr[2];
+        // Filter out black, white and grays...... (tolerance within 10 pixels)
+        int tolerance = 10;
+        if (rgDiff > tolerance || rgDiff < -tolerance)
+            if (rbDiff > tolerance || rbDiff < -tolerance)
+                return false;
+        double darkness = ((double) (rgbArr[0] + rgbArr[1] + rgbArr[2])/3);
+        return true;
     }
 }

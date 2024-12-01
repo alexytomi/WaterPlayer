@@ -123,6 +123,7 @@
   "waterplayer.config.overlay.position.top_right": "Top Right",
   "waterplayer.config.overlay.position.bottom_left": "Bottom Left",
   "waterplayer.config.overlay.position.bottom_right": "Bottom Right",
+  "waterplayer.config.overlay.accent_color": "Accent Color",
 
   "waterplayer.config.menu": "Menu",
   "waterplayer.config.enable_menu_overlay": "Main Menu Overlay",
@@ -177,6 +178,7 @@
   "waterplayer.secret.how_to_get_tokens": "How to get my Tokens?",
   "waterplayer.secret.description": "After changing the data, you'll need to re-launch! Sorry...",
   "waterplayer.secret.title.tokens": "Tokens",
+  "waterplayer.config.youtube_refresh_token": "YouTube Refresh Token",
   "waterplayer.config.yandex_music_token": "Yandex Music Token",
   "waterplayer.config.vk_music_token": "VK Token",
   "waterplayer.config.deezer_decryption_key": "Deezer Decryption Key",

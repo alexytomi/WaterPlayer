@@ -109,7 +109,7 @@ public class History {
             Files.writeString(file.toPath(), this.huy.toString());
         } catch (IOException var3) {
             IOException e = var3;
-            AlinLib.log(e.getLocalizedMessage(), Level.ERROR);
+            WaterPlayer.log(e.getLocalizedMessage(), Level.ERROR);
         }
     }
 }

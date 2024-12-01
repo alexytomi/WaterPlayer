@@ -124,6 +124,7 @@
   "waterplayer.config.overlay.position.top_right": "Сверху справа",
   "waterplayer.config.overlay.position.bottom_left": "Снизу слева",
   "waterplayer.config.overlay.position.bottom_right": "Снизу справа",
+  "waterplayer.config.overlay.accent_color": "Акцентный цвет",
 
   "waterplayer.config.menu": "Меню",
   "waterplayer.config.enable_menu_overlay": "Оверлей в главном меню",
@@ -178,6 +179,7 @@
   "waterplayer.secret.how_to_get_tokens": "Как получить свои токены?",
   "waterplayer.secret.description": "После смены данных необходимо перезапустить игру! Извините...",
   "waterplayer.secret.title.tokens": "Токены",
+  "waterplayer.config.youtube_refresh_token": "Замедленный Ютуб Refresh Token",
   "waterplayer.config.yandex_music_token": "Токен Яндекс.Музыки",
   "waterplayer.config.vk_music_token": "Токен ВК",
   "waterplayer.config.deezer_decryption_key": "Deezer Decryption Key",

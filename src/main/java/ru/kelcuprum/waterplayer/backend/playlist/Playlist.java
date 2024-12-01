@@ -87,7 +87,7 @@ public class Playlist {
                 bufferedImage = bufferedImage.getSubimage(x, 0, bufferedImage.getHeight(), bufferedImage.getHeight());
             }
             BufferedImage scaleImage = toBufferedImage(bufferedImage.getScaledInstance(128, 128, 2));
-            if(TextureHelper.resourceLocationMap$Base64.containsKey(String.format("playlist-%s", fileName))) TextureHelper.remove$Base64(String.format("playlist-%s", fileName), this.icon);
+            if(TextureHelper.resourceLocationMap.containsKey(String.format("playlist-%s", fileName))) TextureHelper.remove$Base64(String.format("playlist-%s", fileName), this.icon);
             this.icon = encodeToString(scaleImage);
             save();
         } catch (Exception e){

@@ -16,6 +16,7 @@ import ru.kelcuprum.alinlib.config.Localization;
 import ru.kelcuprum.alinlib.gui.Colors;
 import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
 import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.toast.ToastBuilder;
@@ -74,7 +75,7 @@ public class TrackScreen extends Screen {
         if (showLyrics || showPlaylist) x += lyricsSize;
         if (showPlaylist) initPlaylist();
         else if (showLyrics) {
-            addRenderableWidget(new TextBox(5, 5, lyricsSize - 10, 20, Localization.getText("waterplayer.track.lyrics.title"), true));
+            addRenderableWidget(new TextBuilder(Localization.getText("waterplayer.track.lyrics.title")).setPosition(5, 5).setPosition(lyricsSize-10, 20));
             lyricsBox = addRenderableWidget(new LyricsBox(10, 35, lyricsSize - 20, height - (lyricsEnable ? 95 : 70), Component.empty())).setLyrics(Component.literal(lyricsEnable ? lyrics.getText() != null ? lyrics.getText().replace("\r", "") : "404: Not found" : "404: Not found"));
             if(lyricsEnable) addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.track.lyrics.copy"), (onPress) -> {
                 AlinLib.MINECRAFT.keyboardHandler.setClipboard(lyrics.getText() == null ? "" : lyrics.getText());
@@ -120,13 +121,13 @@ public class TrackScreen extends Screen {
         y+=25;
         if(MusicHelper.isFile(track)) addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.editor"), (huy) -> WaterPlayer.openTrackEditor(new File(track.getInfo().uri))).setWidth(componentSize).build()).setPosition(x, y);
         int textY = height / 2 - 15 - iconSize + 5;
-        addRenderableWidget(new TextBox(x + iconSize + 5, textY, componentSize - (iconSize + 10), font.lineHeight, Component.literal(MusicHelper.getTitle(track)), false));
+        addRenderableWidget(new TextBuilder(Component.literal(MusicHelper.getTitle(track))).setAlign(TextBuilder.ALIGN.LEFT).setPosition(x + iconSize + 5, textY).setSize(componentSize - (iconSize + 10), font.lineHeight).build());
         textY += (font.lineHeight + 5);
         if (!MusicHelper.getAuthor(track).isBlank()) {
-            addRenderableWidget(new TextBox(x + iconSize + 5, textY, componentSize - (iconSize + 10), font.lineHeight, Component.translatable("waterplayer.track.author", MusicHelper.getAuthor(track)), false));
+            addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.track.author", MusicHelper.getAuthor(track))).setAlign(TextBuilder.ALIGN.LEFT).setPosition(x + iconSize + 5, textY).setSize(componentSize - (iconSize + 10), font.lineHeight).build());
             textY += (font.lineHeight + 5);
         }
-        addRenderableWidget(new TextBox(x + iconSize + 5, textY, componentSize - (iconSize + 10), font.lineHeight, Component.translatable("waterplayer.track.service", MusicHelper.getServiceName(MusicHelper.getService(track))), false));
+        addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.track.service", MusicHelper.getServiceName(MusicHelper.getService(track)))).setAlign(TextBuilder.ALIGN.LEFT).setPosition(x + iconSize + 5, textY).setSize(componentSize - (iconSize + 10), font.lineHeight).build());
     }
 
     private ConfigureScrolWidget scroller_panel;
@@ -136,7 +137,7 @@ public class TrackScreen extends Screen {
 
     public void initPlaylist() {
         playlists = new ArrayList<>();
-        titleW = addRenderableWidget(new TextBox(5, 5, lyricsSize - 10, 30, Localization.getText("waterplayer.track.playlists"), true));
+        titleW = (TextBox) addRenderableWidget(new TextBuilder(Localization.getText("waterplayer.track.playlists")).setPosition(5, 5).setSize(lyricsSize-10, 30).build());
         back = (Button) addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.track.playlists.hide"), (onPress) -> {
                         showPlaylist = false;
                         rebuildWidgets();
@@ -162,7 +163,7 @@ public class TrackScreen extends Screen {
         }
         addRenderableWidgets(playlists);
 
-        this.scroller_panel = addRenderableWidget(new ConfigureScrolWidget(-8, 0, 4, this.height, Component.empty(), scroller -> {
+        this.scroller_panel = addRenderableWidget(new ConfigureScrolWidget(0, 0, 4, this.height, Component.empty(), scroller -> {
             scroller.innerHeight = 5;
             titleW.setY((int) (scroller.innerHeight - scroller.scrollAmount()));
             scroller.innerHeight += titleW.getHeight() + 5;

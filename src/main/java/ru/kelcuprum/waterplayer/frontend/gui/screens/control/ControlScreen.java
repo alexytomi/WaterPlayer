@@ -11,17 +11,17 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Items;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.glfw.GLFW;
 import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.gui.GuiUtils;
+import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.selector.SelectorBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
 import ru.kelcuprum.alinlib.gui.components.editbox.EditBox;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.backend.queue.AbstractQueue;
 import ru.kelcuprum.waterplayer.frontend.gui.LyricsHelper;
@@ -30,7 +30,9 @@ import ru.kelcuprum.waterplayer.frontend.gui.components.TrackButton;
 import ru.kelcuprum.waterplayer.frontend.gui.screens.HistoryScreen;
 import ru.kelcuprum.waterplayer.frontend.gui.screens.TrackScreen;
 import ru.kelcuprum.waterplayer.frontend.gui.screens.config.PlaylistsScreen;
-import ru.kelcuprum.waterplayer.frontend.gui.screens.control.components.*;
+import ru.kelcuprum.waterplayer.frontend.gui.screens.control.components.TimelineComponent;
+import ru.kelcuprum.waterplayer.frontend.gui.screens.control.components.TrackIconButton;
+import ru.kelcuprum.waterplayer.frontend.gui.screens.control.components.VolumeComponent;
 import ru.kelcuprum.waterplayer.frontend.gui.screens.search.SearchScreen;
 import ru.kelcuprum.waterplayer.frontend.gui.style.AirStyle;
 import ru.kelcuprum.waterplayer.frontend.localization.MusicHelper;
@@ -43,6 +45,7 @@ import java.util.Objects;
 
 import static ru.kelcuprum.alinlib.gui.Colors.BLACK_ALPHA;
 import static ru.kelcuprum.alinlib.gui.Icons.*;
+import static ru.kelcuprum.alinlib.gui.Icons.SEARCH;
 import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.*;
 
 public class ControlScreen extends Screen {
@@ -75,7 +78,7 @@ public class ControlScreen extends Screen {
         int cWidth = controlPanelWidth - 10;
         int x = 10;
         int y = 35;
-        addRenderableWidget(new TextBox(5, 5, cWidth, 20, title, true));
+        addRenderableWidget(new TextBuilder(title).setPosition(5, 5).setSize(cWidth, 20).build());
         addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.load.url.copy"), (s) -> editBox.setValue(WaterPlayer.config.getString("LAST_REQUEST_MUSIC", "")))
                 .setSprite(RESET)
                 .setSize(20, 20)
@@ -246,7 +249,7 @@ public class ControlScreen extends Screen {
     public void initQueue() {
         addRenderableWidget(new ButtonBuilder(Component.literal("x"), (s) -> onClose()).setPosition(width - 25, 5).setSize(20, 20).build());
         int queueWidth = width - 15 - controlPanelWidth;
-        this.queue = addRenderableWidget(new ConfigureScrolWidget(10 + controlPanelWidth + queueWidth - 4, 30, 5, this.height - 80, Component.empty(), scroller -> {
+        this.queue = addRenderableWidget(new ConfigureScrolWidget(10 + controlPanelWidth + queueWidth, 30, 5, this.height - 80, Component.empty(), scroller -> {
             scroller.innerHeight = 0;
             for (AbstractWidget widget : scroller.widgets) {
                 if (widget.visible) {

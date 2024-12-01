@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Level;
 import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.gui.Icons;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.screens.ConfigScreenBuilder;
 import ru.kelcuprum.waterplayer.WaterPlayer;
@@ -58,7 +59,7 @@ public class PlaylistsScreen {
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.editor"), (e) -> WaterPlayer.openTrackEditor()).setIcon(Icons.MUSIC).setCentered(false).build())
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.play"), (e) -> AlinLib.MINECRAFT.setScreen(WaterPlayer.getControlScreen(PlaylistsScreen.build(parent)))).setIcon(getPlayOrPause(WaterPlayer.player.getAudioPlayer().isPaused())).setCentered(false).build())
                 //
-                .addWidget(new TextBox(140, 5, Component.translatable("waterplayer.playlists"), true));
+                .addWidget(new TextBuilder(Component.translatable("waterplayer.playlists")));
         Screen thisScreen = builder.build();
         if(playlists.exists() && playlists.isDirectory()){
             for(File playlist : Objects.requireNonNull(playlists.listFiles())){

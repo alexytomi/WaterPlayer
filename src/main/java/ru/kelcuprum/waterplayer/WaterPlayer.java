@@ -98,6 +98,7 @@ public class WaterPlayer implements ClientModInitializer {
         ClientLifecycleEvents.CLIENT_STOPPING.register(e -> {
             player.getAudioPlayer().stopTrack();
             discordIntegration.exitApplication();
+            config.setString("YOUTUBE_REFRESH_TOKEN", player.youtube.getOauth2RefreshToken());
             TextureHelper.saveMap();
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

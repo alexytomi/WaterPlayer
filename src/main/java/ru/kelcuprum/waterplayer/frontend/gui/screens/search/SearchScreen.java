@@ -19,9 +19,8 @@ import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.selector.SelectorBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
-import ru.kelcuprum.alinlib.gui.components.text.MessageBox;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.backend.MusicPlayer;
 import ru.kelcuprum.waterplayer.backend.WaterPlayerAPI;
@@ -33,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ru.kelcuprum.alinlib.gui.Icons.RESET;
+import static ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder.ALIGN.CENTER;
 
 public class SearchScreen extends Screen {
     protected final Screen parent;
@@ -83,7 +83,7 @@ public class SearchScreen extends Screen {
     protected void init() {
         int x = 10;
         int size = 200;
-        addRenderableWidget(new TextBox(x, 5, size, 20, title, true));
+        addRenderableWidget(new TextBuilder(title).setPosition(x, 5).setSize(size, 20).build());
         request = (EditBox) new EditBoxBuilder(Component.translatable("waterplayer.search.query")).setPosition(x+25, 35).setSize(size-25, 20).build();
         request.setValue(requestValue);
         request.setResponder((s) -> requestValue = s);
@@ -135,7 +135,7 @@ public class SearchScreen extends Screen {
     public void initList(){
         widgets = new ArrayList<>();
         int x = 220;
-        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 8, 0, 4, this.height, Component.empty(), scroller -> {
+        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 4, 0, 4, this.height, Component.empty(), scroller -> {
             scroller.innerHeight = 5;
             for(AbstractWidget widget : widgets){
                 if(widget.visible){
@@ -145,13 +145,13 @@ public class SearchScreen extends Screen {
                 } else widget.setY(-widget.getHeight());
             }
         }));
-        widgets.add(new TextBox(x, 5, width-220, 20, Component.translatable("waterplayer.search.result"), true));
+        widgets.add(new TextBuilder(Component.translatable("waterplayer.search.result")).setPosition(x, 5).setSize(width-220, 20).build());
         if(services[searchService].startsWith("wpsearch:")){
-            if(playlists.isEmpty()) widgets.add(new MessageBox(x, 20, width - 225, 20, Component.translatable("waterplayer.search.not_found"), true));
+            if(playlists.isEmpty()) widgets.add(new TextBuilder(Component.translatable("waterplayer.search.not_found")).setAlign(CENTER).setPosition(x, 20).setSize(width - 225, 20).build());
             else for(WebPlaylist playlist : playlists) widgets.add(new PlaylistButton(x, 20, 220, playlist, this));
         } else {
             if (list.isEmpty())
-                widgets.add(new MessageBox(x, 20, width - 220, 20, Component.translatable("waterplayer.search.not_found"), true));
+                widgets.add(new TextBuilder(Component.translatable("waterplayer.search.not_found")).setAlign(CENTER).setPosition(x, 20).setSize(width - 225, 20).build());
             else for (AudioTrack track : list) widgets.add(new TrackButton(x, 20, width - 220, track, this, false));
         }
 

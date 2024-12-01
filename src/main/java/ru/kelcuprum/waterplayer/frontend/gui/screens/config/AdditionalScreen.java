@@ -11,6 +11,7 @@ import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBooleanBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.selector.SelectorBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.text.CategoryBox;
 import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.screens.ConfigScreenBuilder;
@@ -41,7 +42,7 @@ public class AdditionalScreen {
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.editor"), (e) -> WaterPlayer.openTrackEditor()).setIcon(Icons.MUSIC).setCentered(false).build())
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.play"), (e) -> AlinLib.MINECRAFT.setScreen(WaterPlayer.getControlScreen(AdditionalScreen.build(parent)))).setIcon(getPlayOrPause(WaterPlayer.player.getAudioPlayer().isPaused())).setCentered(false).build())
                 //
-                .addWidget(new TextBox(140, 5, Component.translatable("waterplayer.additional"), true));
+                .addWidget(new TextBuilder(Component.translatable("waterplayer.additional")));
         String[] devices = WaterPlayer.player.getAudioOutput().getAudioDevices();
         String selectedDevice = WaterPlayer.config.getString("SPEAKER", "");
         if(devices.length > 0) {
@@ -94,7 +95,7 @@ public class AdditionalScreen {
                     WaterPlayer.getToast().setMessage(Component.translatable("waterplayer.api.config_updated")).buildAndShow();
                 }).setIcon(RESET).build())
         );
-        builder.addWidget(new TextBox(Component.translatable("waterplayer.config.experiments")));
+        builder.addWidget(new TextBuilder(Component.translatable("waterplayer.config.experiments")));
         builder.addWidget(new ButtonBooleanBuilder(Component.translatable("waterplayer.config.experiment.filters"), false).setConfig(WaterPlayer.config, "EXPERIMENT.FILTERS"));
         builder.addWidget(new CategoryBox(Component.translatable("waterplayer.config.data"))
                 .addValue(new ButtonBooleanBuilder(Component.translatable("waterplayer.config.data.use_global"), false).setConfig(WaterPlayer.pathConfig, "USE_GLOBAL"))

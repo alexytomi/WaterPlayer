@@ -6,9 +6,8 @@ import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.gui.Icons;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.text.CategoryBox;
-import ru.kelcuprum.alinlib.gui.components.text.MessageBox;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.screens.ConfigScreenBuilder;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 
@@ -26,10 +25,11 @@ public class SecretConfigsScreen {
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.editor"), (e) -> WaterPlayer.openTrackEditor()).setIcon(Icons.MUSIC).setCentered(false).build())
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.play"), (e) -> AlinLib.MINECRAFT.setScreen(WaterPlayer.getControlScreen(SecretConfigsScreen.build(parent)))).setIcon(getPlayOrPause(WaterPlayer.player.getAudioPlayer().isPaused())).setCentered(false).build())
 
-                .addWidget(new TextBox(Component.translatable("waterplayer.secret"), true))
+                .addWidget(new TextBuilder(Component.translatable("waterplayer.secret")))
                 .addWidget(new ButtonBuilder(Component.translatable("waterplayer.secret.how_to_get_tokens"), (e)-> WaterPlayer.confirmLinkNow(SecretConfigsScreen.build(parent), "https://github.com/topi314/LavaSrc?tab=readme-ov-file#usage")).setIcon(THINK).build())
-                .addWidget(new MessageBox(Component.translatable("waterplayer.secret.description")))
+                .addWidget(new TextBuilder(Component.translatable("waterplayer.secret.description")).setType(TextBuilder.TYPE.BLOCKQUOTE))
                 .addWidget(new CategoryBox(Component.translatable("waterplayer.secret.title.tokens"))
+                        .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.youtube_refresh_token")).setSecret(true).setValue("").setConfig(WaterPlayer.config, "YOUTUBE_REFRESH_TOKEN").build())
                         .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.yandex_music_token")).setValue("").setConfig(WaterPlayer.config, "YANDEX_MUSIC_TOKEN").setSecret(true).build())
                         .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.vk_music_token")).setValue("").setConfig(WaterPlayer.config, "VK_MUSIC_TOKEN").setSecret(true).build())
                         .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.deezer_decryption_key")).setValue("").setConfig(WaterPlayer.config, "DEEZER_DECRYPTION_KEY").setSecret(true).build())

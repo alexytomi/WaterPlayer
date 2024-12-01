@@ -5,8 +5,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
-import ru.kelcuprum.alinlib.gui.components.text.MessageBox;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 
 import java.nio.file.Path;
@@ -32,7 +31,7 @@ public class ConfirmLoadFiles extends Screen {
 
     @Override
     protected void init() {
-        addRenderableWidget(new TextBox(10, 25, width-20, 20, title, true));
+        addRenderableWidget(new TextBuilder(title).setPosition(10, 25).setSize(width-20, 20).build());
         StringBuilder name = new StringBuilder();
         int i = 0;
         for(Path path : list){
@@ -43,7 +42,7 @@ public class ConfirmLoadFiles extends Screen {
             else name.append("\n").append(path.getFileName().toString());
             i++;
         }
-        AbstractWidget msgBx = addRenderableWidget(new MessageBox(10, 55, width-20, height-80, Component.literal(name.toString()), true));
+        AbstractWidget msgBx = addRenderableWidget(new TextBuilder(Component.literal(name.toString())).setType(TextBuilder.TYPE.MESSAGE).setPosition(10, 55).setSize(width-20, height-80).build());
         addRenderableWidget(new ButtonBuilder(CommonComponents.GUI_YES, (s) -> {
             for(Path path : list){
                 if(path.getFileName().toString().endsWith(".json")){

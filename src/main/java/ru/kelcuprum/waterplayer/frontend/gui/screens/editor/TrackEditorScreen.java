@@ -19,18 +19,16 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.gui.Colors;
 import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
-import ru.kelcuprum.alinlib.gui.components.ImageWidget;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
-import ru.kelcuprum.alinlib.gui.components.text.MessageBox;
 import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.screens.AbstractConfigScreen;
 import ru.kelcuprum.alinlib.gui.toast.ToastBuilder;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.frontend.gui.TextureHelper;
 import ru.kelcuprum.waterplayer.frontend.gui.screens.config.PlaylistsScreen;
-import ru.kelcuprum.waterplayer.frontend.gui.screens.playlist.ConfirmAddedFiles;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -40,7 +38,6 @@ import java.util.List;
 
 import static ru.kelcuprum.alinlib.gui.Icons.*;
 import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.NO_ICON;
-import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.NO_PLAYLIST_ICON;
 
 public class TrackEditorScreen extends Screen {
     @NotNull
@@ -72,12 +69,12 @@ public class TrackEditorScreen extends Screen {
     public void initPanel() {
         int x = 10;
         int size = 200;
-        addRenderableWidget(new TextBox(x, 5, size, 20, Component.translatable("waterplayer.editor"), true));
-        addRenderableWidget(new TextBox(x, 30, size, 20, Component.translatable("waterplayer.editor.file", file.getName()), true));
+        addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.editor")).setPosition(x, 5).setSize(size, 20).build());
+        addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.editor.file", file.getName())).setPosition(x, 30).setSize(size, 20).build());
         int y = 60;
         icon = (Button) addRenderableWidget(new ButtonBuilder(Component.empty(), (s) -> showOpenFileDialog$icon()).setSprite(getIcon()).setPosition(x, y).setSize(36, 36).build());
-        addRenderableWidget(new TextBox(x+41, y, size-41, 18, Component.translatable("waterplayer.playlist.edit.drag_and_drop"), false, (s) -> showOpenFileDialog$icon()));
-        addRenderableWidget(new TextBox(x+41, y+18, size-41, 18, Component.translatable("waterplayer.playlist.edit.drag_and_drop.second"), false, (s) -> showOpenFileDialog$icon()));
+        addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.playlist.edit.drag_and_drop"), (s) -> showOpenFileDialog$icon()).setPosition(x+41, y).setSize(size-41, 18).build());
+        addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.playlist.edit.drag_and_drop.second"), (s) -> showOpenFileDialog$icon()).setPosition(x+41, y+18).setSize(size-41, 18).build());
         y += 41;
         addRenderableWidget(new EditBoxBuilder(Component.translatable("waterplayer.playlist.title"), (s) -> {
             try {
@@ -113,7 +110,7 @@ public class TrackEditorScreen extends Screen {
             }
         }).setPosition(x, y).setSize(size, 20).build());
         y+=25;
-        TextBox msg = addRenderableWidget(new TextBox(x, y, size, 20, Component.translatable("waterplayer.editor.upload_text"), false, (s) -> showOpenFileDialog$lyrics()));
+        TextBox msg = (TextBox) addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.editor.upload_text"), (s) -> showOpenFileDialog$lyrics()).setPosition(x, y).setSize(size, 20).build());
         y+=25;
         addRenderableWidget(new ButtonBuilder(CommonComponents.GUI_BACK, (e) -> onClose()).setPosition(x, y).setSize(size, 20).build());
         y+=25;
@@ -121,7 +118,7 @@ public class TrackEditorScreen extends Screen {
     }
     public void initLyrics(){
         widgets = new ArrayList<>();
-        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 8, 0, 4, this.height, Component.empty(), scroller -> {
+        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 4, 0, 4, this.height, Component.empty(), scroller -> {
             scroller.innerHeight = 5;
             for (AbstractWidget widget : widgets) {
                 if (widget.visible) {
@@ -131,9 +128,9 @@ public class TrackEditorScreen extends Screen {
             }
         }));
         int x = 220;
-        widgets.add(new TextBox(x, 5, width - 225, 20, Component.translatable("waterplayer.editor.lyrics"), true));
-        if(audioFile.getTag().getFirst(FieldKey.LYRICS).isBlank()) widgets.add(new MessageBox(x, 5, width - 225, 20, Component.translatable("waterplayer.editor.lyrics.no"), true));
-        else widgets.add(new MessageBox(x, 5, width - 225, 20, Component.literal(audioFile.getTag().getFirst(FieldKey.LYRICS)), false));
+        widgets.add(new TextBuilder(Component.translatable("waterplayer.editor.lyrics")).setPosition(x, 5).setSize(width - 225, 20).build());
+        if(audioFile.getTag().getFirst(FieldKey.LYRICS).isBlank()) widgets.add(new TextBuilder(Component.translatable("waterplayer.editor.lyrics.no")).setType(TextBuilder.TYPE.MESSAGE).setPosition(x, 5).setSize(width - 225, 20).build());
+        else widgets.add(new TextBuilder(Component.literal(audioFile.getTag().getFirst(FieldKey.LYRICS))).setType(TextBuilder.TYPE.MESSAGE).setPosition(x, 5).setSize(width - 225, 20).build());
         addRenderableWidgets(widgets);
     }
 

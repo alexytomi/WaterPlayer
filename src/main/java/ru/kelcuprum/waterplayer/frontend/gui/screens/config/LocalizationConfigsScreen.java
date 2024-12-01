@@ -5,8 +5,8 @@ import net.minecraft.network.chat.Component;
 import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.text.CategoryBox;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.screens.ConfigScreenBuilder;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 
@@ -25,7 +25,7 @@ public class LocalizationConfigsScreen {
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.editor"), (e) -> WaterPlayer.openTrackEditor()).setIcon(MUSIC).setCentered(false).build())
                 .addPanelWidget(new ButtonBuilder(Component.translatable("waterplayer.play"), (e) -> AlinLib.MINECRAFT.setScreen(WaterPlayer.getControlScreen(LocalizationConfigsScreen.build(parent)))).setIcon(getPlayOrPause(WaterPlayer.player.getAudioPlayer().isPaused())).setCentered(false).build())
                 //
-                .addWidget(new TextBox(Component.translatable("waterplayer.config.localization"), true))
+                .addWidget(new TextBuilder(Component.translatable("waterplayer.config.localization")))
                 .addWidget(new CategoryBox(Component.translatable("waterplayer.config.localization.title.formats"))
                         .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.localization.format.time")).setLocalization(WaterPlayer.localization, "format.time").build())
                         .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.localization.format.live")).setLocalization(WaterPlayer.localization, "format.live").build())

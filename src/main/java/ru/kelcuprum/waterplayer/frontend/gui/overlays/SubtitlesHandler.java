@@ -31,11 +31,9 @@ public class SubtitlesHandler implements GuiRenderEvents {
                         StringBuilder builder = new StringBuilder();
                         for (AudioLyrics.Line line : list) {
                             Duration pos = Duration.ofMillis(track.getPosition());
-                            if (line.getDuration() != null) {
-                                if (pos.toMillis() >= line.getTimestamp().toMillis() && pos.toMillis() <= line.getTimestamp().toMillis() + line.getDuration().toMillis()) {
+                            if (line.getDuration() != null)
+                                if (pos.toMillis() >= line.getTimestamp().toMillis() && pos.toMillis() <= line.getTimestamp().toMillis() + line.getDuration().toMillis())
                                     builder.append(line.getLine()).append("\n");
-                                }
-                            }
                         }
                         texts.addAll(AlinLib.MINECRAFT.font.split(FormattedText.of(builder.toString()), AlinLib.MINECRAFT.getWindow().getGuiScaledWidth() / 2));
                     }
@@ -53,6 +51,7 @@ public class SubtitlesHandler implements GuiRenderEvents {
     @Override
     public void onRender(GuiGraphics guiGraphics, float tickDelta) {
         if (!WaterPlayer.config.getBoolean("SUBTITLES", false)) return;
+        if(!isTrackEnable()) return;
         updateTexts();
         int l = texts.size() - 1;
         int iay = WaterPlayer.config.getNumber("SUBTITLES.INDENT_Y", 85).intValue();

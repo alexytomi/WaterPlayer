@@ -20,8 +20,8 @@ import ru.kelcuprum.alinlib.gui.Colors;
 import ru.kelcuprum.alinlib.gui.components.ConfigureScrolWidget;
 import ru.kelcuprum.alinlib.gui.components.ImageWidget;
 import ru.kelcuprum.alinlib.gui.components.builder.button.ButtonBuilder;
+import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.buttons.Button;
-import ru.kelcuprum.alinlib.gui.components.text.MessageBox;
 import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.screens.AbstractConfigScreen;
 import ru.kelcuprum.alinlib.gui.toast.ToastBuilder;
@@ -39,9 +39,9 @@ import ru.kelcuprum.waterplayer.frontend.gui.screens.config.PlaylistsScreen;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.kelcuprum.alinlib.gui.Icons.DONT;
-import static ru.kelcuprum.alinlib.gui.Icons.CLOWNFISH;
+import static ru.kelcuprum.alinlib.gui.Icons.*;
 import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.*;
+import static ru.kelcuprum.waterplayer.WaterPlayer.Icons.MUSIC;
 
 public class ViewPlaylistScreen extends Screen {
     @NotNull
@@ -89,11 +89,11 @@ public class ViewPlaylistScreen extends Screen {
     public void initPanel() {
         int x = 10;
         int size = 200;
-        addRenderableWidget(new TextBox(x, 5, size, 20, Component.translatable(webPlaylist == null ? "waterplayer.playlist" : "waterplayer.playlist.web"), true));
+        addRenderableWidget(new TextBuilder(Component.translatable(webPlaylist == null ? "waterplayer.playlist" : "waterplayer.playlist.web")).setPosition(x, 5).setSize(size, 20).build());
         int y = 35;
         icon = addRenderableWidget(new ImageWidget(x, y, 36, 36, getIcon(), 36, 36, Component.empty()));
-        addRenderableWidget(new TextBox(x + 41, y, size - 41, 18, Component.literal(playlist.title), false));
-        addRenderableWidget(new TextBox(x + 41, y + 18, size - 41, 18, Component.literal(playlist.author), false));
+        addRenderableWidget(new TextBuilder(Component.literal(playlist.title)).setAlign(TextBuilder.ALIGN.LEFT).setPosition(x + 41, y).setSize(size - 41, 18).build());
+        addRenderableWidget(new TextBuilder(Component.literal(playlist.author)).setAlign(TextBuilder.ALIGN.LEFT).setPosition(x + 41, y + 18).setSize(size - 41, 18).build());
         y += 41;
         if (webPlaylist == null) {
             addRenderableWidget(new ButtonBuilder(Component.translatable("waterplayer.playlist.edit_button"), (e) -> {
@@ -121,8 +121,8 @@ public class ViewPlaylistScreen extends Screen {
         }
         y += 25;
         if(playlist.isPublic){
-            MessageBox box = addRenderableWidget(new MessageBox(x, y, size, 20, Component.translatable("waterplayer.playlist.upload.public.description"), true,
-                    (s) -> WaterPlayer.confirmLinkNow(this, "https://waterplayer.ru/docs/info")));
+            TextBox box = (TextBox) addRenderableWidget(new TextBuilder(Component.translatable("waterplayer.playlist.upload.public.description"),
+                    (s) -> WaterPlayer.confirmLinkNow(this, "https://waterplayer.ru/docs/info")).setType(TextBuilder.TYPE.MESSAGE).setAlign(TextBuilder.ALIGN.CENTER).setPosition(x, y).setSize(size, 20).build());
             y+=(box.getHeight()+5);
         }
         upload = (Button) addRenderableWidget(new ButtonBuilder(Component.translatable(isCreatedLink ? "waterplayer.playlist.copy_link" : "waterplayer.playlist.upload"), (e) -> new Thread(() -> {
@@ -160,7 +160,7 @@ public class ViewPlaylistScreen extends Screen {
     private TextBox emptyTracks;
     public void initTracks() {
         widgets = new ArrayList<>();
-        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 8, 0, 4, this.height, Component.empty(), scroller -> {
+        this.scroller = addRenderableWidget(new ConfigureScrolWidget(this.width - 4, 0, 4, this.height, Component.empty(), scroller -> {
             scroller.innerHeight = 5;
             for (AbstractWidget widget : widgets) {
                 if (widget.visible) {
@@ -170,7 +170,7 @@ public class ViewPlaylistScreen extends Screen {
             }
         }));
         int x = 220;
-        widgets.add(new TextBox(x, 5, width - 225, 20, Component.translatable("waterplayer.playlist.tracks"), true));
+        widgets.add(new TextBuilder(Component.translatable("waterplayer.playlist.tracks")).setPosition(x, 5).setSize(width - 225, 20).build());
         int i = 30;
         for (AbstractWidget element : trackWidgets) {
             element.setPosition(x, i);
@@ -178,7 +178,7 @@ public class ViewPlaylistScreen extends Screen {
             widgets.add(element);
             i += element.getHeight() + 5;
         }
-        emptyTracks = addWidget(new TextBox(x, 76, width-225, 20, Component.translatable("waterplayer.playlist.is_empty"), false));
+        emptyTracks = (TextBox) addWidget(new TextBuilder(Component.translatable("waterplayer.playlist.is_empty")).setPosition(x, 76).setSize(width - 225, 20).build());
         emptyTracks.setActive(false);
         emptyTracks.visible = isClownfishMoment();
         addRenderableWidgets(widgets);
