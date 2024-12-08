@@ -34,6 +34,7 @@ import ru.kelcuprum.alinlib.config.Config;
 import ru.kelcuprum.alinlib.config.Localization;
 import ru.kelcuprum.alinlib.gui.GuiUtils;
 import ru.kelcuprum.alinlib.gui.toast.ToastBuilder;
+import ru.kelcuprum.waterplayer.api.WebAPI;
 import ru.kelcuprum.waterplayer.backend.History;
 import ru.kelcuprum.waterplayer.backend.KeyBind;
 import ru.kelcuprum.waterplayer.backend.MusicPlayer;
@@ -55,11 +56,14 @@ import static ru.kelcuprum.alinlib.gui.Icons.DONT;
 public class WaterPlayer implements ClientModInitializer {
     public static Config pathConfig = new Config("config/WaterPlayer/path.json");
     public static Config config = new Config(getPath()+"/config.json");
+    public static Config apiConfig = new Config(getPath()+"/api.config.json");
     public static final Logger LOG = LogManager.getLogger("WaterPlayer");
     public static MusicPlayer player;
     public static Localization localization = new Localization("waterplayer", WaterPlayer.getPath()+"/lang");
     public static DiscordIntegration discordIntegration;
     public static History history;
+
+    private boolean apiState = WaterPlayer.apiConfig.getBoolean("enable", true);
 
     public static String getPath(){
         String path = pathConfig.getBoolean("USE_GLOBAL", false) ? pathConfig.getString("PATH", "{HOME}/WaterPlayer") : "config/WaterPlayer";
@@ -94,6 +98,7 @@ public class WaterPlayer implements ClientModInitializer {
             GuiRenderEvents.RENDER.register(hud);
             GuiRenderEvents.RENDER.register(sub);
             ClientTickEvents.START_CLIENT_TICK.register(hud);
+
         });
         ClientLifecycleEvents.CLIENT_STOPPING.register(e -> {
             player.getAudioPlayer().stopTrack();
@@ -102,6 +107,10 @@ public class WaterPlayer implements ClientModInitializer {
             TextureHelper.saveMap();
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if(apiState != WaterPlayer.apiConfig.getBoolean("enable", false)){
+                apiState = WaterPlayer.apiConfig.getBoolean("enable", false);
+                if(apiState) WebAPI.run(); else WebAPI.stop();
+            }
             for (KeyBind bind : keyBinds) {
                 if (bind.key().consumeClick()) bind.onExecute().run();
             }
@@ -130,6 +139,7 @@ public class WaterPlayer implements ClientModInitializer {
                     )
             );
         }));
+        if(WaterPlayer.apiConfig.getBoolean("enable", false)) WebAPI.run();
 
         ScreenEvents.KEY_PRESS.register((Screen screen, int code, int scan, int modifiers, CallbackInfoReturnable<Boolean> var5) -> {
             if (!WaterPlayer.config.getBoolean("ENABLE_KEYBINDS", false)) return;

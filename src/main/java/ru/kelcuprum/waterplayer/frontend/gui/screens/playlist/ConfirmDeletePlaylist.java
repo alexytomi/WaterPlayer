@@ -54,7 +54,11 @@ public class ConfirmDeletePlaylist extends Screen {
         //#endif
 
         //#if MC >= 12100
-        renderBlurredBackground();
+        renderBlurredBackground(
+                //#if MC == 12101
+                //$$f
+                //#endif
+        );
         //#endif
         int bottom = 0x7FA14343;
         int top = 0x7F000000;

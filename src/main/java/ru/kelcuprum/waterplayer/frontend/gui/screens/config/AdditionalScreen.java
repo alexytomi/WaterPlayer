@@ -13,7 +13,6 @@ import ru.kelcuprum.alinlib.gui.components.builder.editbox.EditBoxBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.selector.SelectorBuilder;
 import ru.kelcuprum.alinlib.gui.components.builder.text.TextBuilder;
 import ru.kelcuprum.alinlib.gui.components.text.CategoryBox;
-import ru.kelcuprum.alinlib.gui.components.text.TextBox;
 import ru.kelcuprum.alinlib.gui.screens.ConfigScreenBuilder;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.backend.WaterPlayerAPI;
@@ -74,6 +73,14 @@ public class AdditionalScreen {
         );
         builder.addWidget(new CategoryBox(Component.translatable("waterplayer.cache"))
                 .addValue(new ButtonBuilder(Component.translatable("waterplayer.cache.icons.size"), Component.literal(CommonUtils.getParsedFileSize(new File(WaterPlayer.getPath()+"/textures")))).setActive(false))
+                .addValue(new TextBuilder(Component.translatable("waterplayer.config.texture_helper.min_size.warning")).setType(TextBuilder.TYPE.BLOCKQUOTE))
+                .addValue(new SelectorBuilder(Component.translatable("waterplayer.config.texture_helper.min_size")).setList(new String[]{
+                        "64x64",
+                        "128x128",
+                        "256x256",
+                        "512x512",
+                        Component.translatable("waterplayer.config.texture_helper.min_size.max").getString()
+                }).setValue(1).setConfig(WaterPlayer.config, "TEXTURE_HELPER.MIN_SIZE"))
                 .addValue(new ButtonBuilder(Component.translatable("waterplayer.cache.icons.reset.tracks")).setOnPress((s) -> {
                     TextureHelper.removeTracksCache();
                     AlinLib.MINECRAFT.setScreen(AdditionalScreen.build(parent));
@@ -97,6 +104,12 @@ public class AdditionalScreen {
         );
         builder.addWidget(new TextBuilder(Component.translatable("waterplayer.config.experiments")));
         builder.addWidget(new ButtonBooleanBuilder(Component.translatable("waterplayer.config.experiment.filters"), false).setConfig(WaterPlayer.config, "EXPERIMENT.FILTERS"));
+        builder.addWidget(new CategoryBox(Component.translatable("waterplayer.integration"))
+                .addValue(new ButtonBooleanBuilder(Component.translatable("waterplayer.config.integration.enable"), false).setConfig(WaterPlayer.apiConfig, "enable"))
+                .addValue(new TextBuilder(Component.translatable("waterplayer.config.integration.hostname.desc")).setType(TextBuilder.TYPE.BLOCKQUOTE))
+                .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.integration.hostname")).setValue("127.0.0.1").setConfig(WaterPlayer.apiConfig, "hostname"))
+                .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.integration.port")).setValue("2264").setConfig(WaterPlayer.apiConfig, "port"))
+        );
         builder.addWidget(new CategoryBox(Component.translatable("waterplayer.config.data"))
                 .addValue(new ButtonBooleanBuilder(Component.translatable("waterplayer.config.data.use_global"), false).setConfig(WaterPlayer.pathConfig, "USE_GLOBAL"))
                 .addValue(new EditBoxBuilder(Component.translatable("waterplayer.config.data.path")).setValue("{HOME}/WaterPlayer").setConfig(WaterPlayer.pathConfig, "PATH"))

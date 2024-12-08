@@ -9,6 +9,7 @@ import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.alinlib.gui.GuiUtils;
 import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.backend.TrackScheduler;
+import ru.kelcuprum.waterplayer.frontend.gui.overlays.OverlayHandler;
 import ru.kelcuprum.waterplayer.frontend.localization.MusicHelper;
 
 import static ru.kelcuprum.alinlib.gui.Colors.*;
@@ -34,11 +35,21 @@ public class TimelineComponent extends AbstractSliderButton {
         }
         GuiUtils.getSelected().renderBackground$widget(guiGraphics, getX(), getY(), getWidth(), getHeight(), isActive(), isHoveredOrFocused());
         if(isActive()) {
-            guiGraphics.fill(getX(), getY(), (int) (getX()+(getWidth()*value)), getY()+getHeight(), WaterPlayer.player.getAudioPlayer().isPaused() ? CLOWNFISH : track.getInfo().isStream ? GROUPIE : SEADRIVE);
+            guiGraphics.fill(getX(), getY(), (int) (getX()+(getWidth()*value)), getY()+getHeight(), WaterPlayer.player.getAudioPlayer().isPaused() ? CLOWNFISH : track.getInfo().isStream ? GROUPIE : 0xFF89b4fa);
+            if(isHoveredOrFocused()) {
+                int pos = (int) (getX()+(getWidth()*value));
+                guiGraphics.fill(pos-1, getY()-2, pos+2, getY()+getHeight()+2, -1);
+            }
             if(showTime && !track.getInfo().isStream) {
-                guiGraphics.drawString(AlinLib.MINECRAFT.font, WaterPlayer.getTimestamp(MusicHelper.getPosition(track)), getX(), getY() - 2 - AlinLib.MINECRAFT.font.lineHeight, -1);
-                String dur = WaterPlayer.getTimestamp(WaterPlayer.player.getAudioPlayer().getPlayingTrack().getDuration());
-                guiGraphics.drawString(AlinLib.MINECRAFT.font, dur, getX() + getWidth() - AlinLib.MINECRAFT.font.width(dur), getY() - 2 - AlinLib.MINECRAFT.font.lineHeight, -1);
+                float scale = 0.7f;
+                int color = -1;
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().scale(scale, scale, scale);
+                int y = (int) ((getY() - 2)  / scale) - AlinLib.MINECRAFT.font.lineHeight;
+                guiGraphics.drawString(AlinLib.MINECRAFT.font, WaterPlayer.getTimestamp(MusicHelper.getPosition(track)), (int) (getX()/scale), y, color);
+                String dur = WaterPlayer.getTimestamp(track.getDuration());
+                guiGraphics.drawString(AlinLib.MINECRAFT.font, dur, (int) ((getX() + getWidth())/scale) - AlinLib.MINECRAFT.font.width(dur), y, color);
+                guiGraphics.pose().popPose();
             } else if(!showTime && isHovered()){
                 String time = track.getInfo().isStream ? WaterPlayer.localization.getLocalization("format.live") : getTimestamp(MusicHelper.getPosition(track)) + " / " + getTimestamp(MusicHelper.getDuration(track));
                 guiGraphics.renderTooltip(AlinLib.MINECRAFT.font, Component.literal(time), i, j);

@@ -134,7 +134,9 @@ public class DiscordIntegration {
             else {
                 if (!MusicHelper.isAuthorNull(track) && WaterPlayer.config.getBoolean("DISCORD.AUTHOR_AVATAR", true)) {
                     String apiIcon = WaterPlayerAPI.getAuthorAvatar(track);
-                    if(!apiIcon.isBlank() && !apiIcon.equals(icon)) builder.setSmallImage(apiIcon, MusicHelper.getAuthor(track));
+                    if(!apiIcon.isBlank() && (icon.equalsIgnoreCase("file") || icon.equalsIgnoreCase("no_icon")))
+                        builder.setLargeImage(apiIcon, getLargeImageText(track));
+                    else if(!apiIcon.isBlank() && !apiIcon.equals(icon)) builder.setSmallImage(apiIcon, MusicHelper.getAuthor(track));
                 }
                 if(WaterPlayer.config.getBoolean("DISCORD.TIME", true)){
                     builder.setStartTimestamp(parseSeconds(start));

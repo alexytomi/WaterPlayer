@@ -128,8 +128,7 @@ public class MusicPlayer {
             youtube = new YoutubeAudioSourceManager(true, new MusicWithThumbnail(), new WebEmbeddedWithThumbnail(), new WebWithThumbnail());
             youtube.setPlaylistPageCount(100);
             String refreshToken = config.getString("YOUTUBE_REFRESH_TOKEN", "");
-            if(refreshToken.isBlank()) youtube.useOauth2(null, false);
-            else youtube.useOauth2(refreshToken, true);
+            if(!refreshToken.isBlank()) youtube.useOauth2(refreshToken, true);
             audioPlayerManager.registerSourceManager(youtube);
             AudioSearchManager ytSearch = new YoutubeSearchManager(() -> audioPlayerManager, "US");
             lyricsManager.registerLyricsManager(new LyricsWithoutException((AudioLyricsManager) ytSearch));

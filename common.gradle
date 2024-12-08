@@ -76,7 +76,7 @@ dependencies {
     mappings loom.layered() {
         officialMojangMappings()
     }
-
+    // Music
     implementation("meteordevelopment:starscript:0.3.4")
     shade (implementation("net.hycrafthd.lavaplayer:lavaplayer:${project.lavaplayer}"))
     shade (implementation("dev.lavalink.youtube:v2:${project.youtube_source}"))
@@ -85,8 +85,14 @@ dependencies {
     shade (implementation("com.github.topi314.lavasrc:lavasrc-protocol:${project.lavasrc_protocol}"))
     shade (implementation("com.github.topi314.lavalyrics:lavalyrics:${project.lavalyrics}"))
     shade (implementation("ru.kelcuprum:jaudiotagger:3.0.2-SNAPSHOT.1"))
+    // Discord
     shade (implementation("io.github.CDAGaming:DiscordIPC:0.10.0"))
+    // API
+    shade (implementation("ru.kelcuprum:java-express:0.2.4-dev.5"){
+        exclude(module: "gson")
+    })
 
+    // Minecraft
     if (mod_brand == 'fabric') {
         modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"

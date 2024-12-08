@@ -89,14 +89,13 @@ public class TextureHelper {
             boolean isFileExists = textureFile.exists();
             try {
                 BufferedImage bufferedImage;
-                if (isFileExists) {
-                    bufferedImage = ImageIO.read(getTextureFile(id));
-                } else if(type == FILE){
+                if (isFileExists) bufferedImage = ImageIO.read(getTextureFile(id));
+                else if(type == FILE){
                     File file = new File(url);
                     AudioFile f = AudioFileIO.read(file);
-                    if (!f.getTag().getArtworkList().isEmpty()) {
+                    if (!f.getTag().getArtworkList().isEmpty())
                         bufferedImage = (BufferedImage) f.getTag().getFirstArtwork().getImage();
-                    } else {
+                    else {
                         resourceLocationMap.put(id, FILE_ICON);
                         return;
                     }
@@ -108,7 +107,7 @@ public class TextureHelper {
                     int x = (bufferedImage.getWidth() - bufferedImage.getHeight()) / 2;
                     bufferedImage = bufferedImage.getSubimage(x, 0, bufferedImage.getHeight(), bufferedImage.getHeight());
                 }
-                int size = Math.min(bufferedImage.getHeight(), 512);
+                int size = Math.min(bufferedImage.getHeight(), getMinSize(bufferedImage.getHeight()));
                 BufferedImage scaleImage = toBufferedImage(bufferedImage.getScaledInstance(size, size, 2));
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 ImageIO.write(scaleImage, "png", byteArrayOutputStream);
@@ -134,6 +133,15 @@ public class TextureHelper {
             data.addProperty("id", id);
             if (!map.contains(data)) map.add(data);
         }
+    }
+    public static int getMinSize(int height){
+        return switch (WaterPlayer.config.getNumber("TEXTURE_HELPER.MIN_SIZE", 1).intValue()){
+            case 1 -> 128;
+            case 2 -> 256;
+            case 3 -> 512;
+            case 4 -> height;
+            default -> 64;
+        };
     }
 
     // File

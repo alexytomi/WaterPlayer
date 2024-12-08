@@ -197,6 +197,12 @@
   "waterplayer.api.update_configs": "Update API Configs",
   "waterplayer.api.config_updated": "Configurations updated",
 
+  "waterplayer.integration": "Web Integration",
+  "waterplayer.config.integration.enable": "Enable Web Integration",
+  "waterplayer.config.integration.hostname.desc": "The default value 127.0.0.1 blocks connection from the outside, to unblock set your IP Address or 0.0.0.0.0",
+  "waterplayer.config.integration.hostname": "Hostname",
+  "waterplayer.config.integration.port": "Port",
+
   "waterplayer.history": "History",
   "waterplayer.control.history": "History",
 
@@ -219,6 +225,9 @@
 
   "waterplayer.cache": "Cache",
   "waterplayer.cache.icons.size": "Icon cache size",
+  "waterplayer.config.texture_helper.min_size.warning": "WARNING: At maximum values, the game may take longer to launch and result in poor performance",
+  "waterplayer.config.texture_helper.min_size": "Maximum cover size",
+  "waterplayer.config.texture_helper.min_size.max": "Unlimited",
   "waterplayer.cache.icons.reset.tracks": "Reset track icon cache",
   "waterplayer.cache.icons.reset.playlists": "Reset playlist icons cache",
   "waterplayer.cache.lyrics.reset": "Reset lyrics cache",

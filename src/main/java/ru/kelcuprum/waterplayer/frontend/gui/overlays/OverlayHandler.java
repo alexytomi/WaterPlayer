@@ -66,7 +66,6 @@ public class OverlayHandler implements GuiRenderEvents, ClientTickEvents.StartTi
 
     public void render(GuiGraphics guiGraphics, int pos) {
         if ((AlinLib.MINECRAFT.options.hideGui ||
-
                 //#if MC >= 12002
                 AlinLib.MINECRAFT.gui.getDebugOverlay().showDebugScreen()
             //#elseif MC < 12002

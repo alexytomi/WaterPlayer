@@ -202,6 +202,12 @@
   "waterplayer.api.update_configs": "Обновить конфиги API",
   "waterplayer.api.config_updated": "Конфиги обновлены",
 
+  "waterplayer.integration": "Веб интеграция",
+  "waterplayer.config.integration.enable": "Включить веб-интеграцию",
+  "waterplayer.config.integration.hostname.desc": "Значение по умолчанию 127.0.0.1 блокирует соединение извне, для разблокировки установите свой IP-адрес или 0.0.0.0",
+  "waterplayer.config.integration.hostname": "Имя хоста",
+  "waterplayer.config.integration.port": "Порт",
+
   "waterplayer.history": "История",
   "waterplayer.control.history": "История",
 
@@ -219,6 +225,9 @@
 
   "waterplayer.cache": "Кэш",
   "waterplayer.cache.icons.size": "Размер кэша иконок",
+  "waterplayer.config.texture_helper.min_size.warning": "ВНИМАНИЕ: При максимальных значениях игра может запускаться дольше, что приведет к снижению производительности",
+  "waterplayer.config.texture_helper.min_size": "Максимальный размер обложки",
+  "waterplayer.config.texture_helper.min_size.max": "Неограничено",
   "waterplayer.cache.icons.reset.tracks": "Сбросить кэш иконок треков",
   "waterplayer.cache.icons.reset.playlists": "Сбросить кэш иконок плейлистов",
   "waterplayer.cache.lyrics.reset": "Сбросить кэш текстов",

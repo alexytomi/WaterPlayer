@@ -35,7 +35,7 @@ public class SubtitlesHandler implements GuiRenderEvents {
                                 if (pos.toMillis() >= line.getTimestamp().toMillis() && pos.toMillis() <= line.getTimestamp().toMillis() + line.getDuration().toMillis())
                                     builder.append(line.getLine()).append("\n");
                         }
-                        texts.addAll(AlinLib.MINECRAFT.font.split(FormattedText.of(builder.toString()), AlinLib.MINECRAFT.getWindow().getGuiScaledWidth() / 2));
+                        texts.addAll(AlinLib.MINECRAFT.font.split(FormattedText.of(builder.toString()), (int) (AlinLib.MINECRAFT.getWindow().getGuiScaledWidth()*0.75)));
                     }
                 }
             }
