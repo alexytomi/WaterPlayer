@@ -29,7 +29,7 @@
     "fabric": "*",
     "alinlib": "*",
     "melody": "*",
-    "minecraft": "${minecraft_dependency}"
+    "minecraft": "*"
   },
   "custom": {
     "modmenu": {
