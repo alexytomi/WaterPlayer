@@ -28,6 +28,7 @@
     "fabricloader": "*",
     "fabric": "*",
     "alinlib": "*",
+    "melody": "*",
     "minecraft": "${minecraft_dependency}"
   },
   "custom": {
