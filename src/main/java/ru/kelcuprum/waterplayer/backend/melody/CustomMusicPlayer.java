@@ -1,20 +1,23 @@
 package ru.kelcuprum.waterplayer.backend.melody;
 
 import ru.kelcuprum.alinlib.config.Config;
+import ru.kelcuprum.waterplayer.backend.MusicPlayer;
 import ru.kelcuprum.waterplayer.backend.melody.OpenAL.CustomAudioPlayer;
 import ru.kelcuprum.waterplayer.backend.melody.OpenAL.CustomAudioPlayerManager;
+import ru.kelcuprum.waterplayer.backend.melody.OpenAL.CustomTrackScheduler;
+import ru.kelcuprum.waterplayer.backend.melody.OpenAL.CustomAudioOutput;
 
-public class MusicPlayer {
+public class CustomMusicPlayer extends MusicPlayer {
 
     // Audio Player Management
-    private CustomAudioPlayerManager audioPlayerManager; // Manages what is being played
-    private CustomAudioPlayer audioPlayer; // Manages control over currently playing
+    private final CustomAudioPlayerManager audioPlayerManager; // Manages what is being played
+    private final CustomAudioPlayer audioPlayer; // Manages control over currently playing
 
     // Track Scheduler
-    private CustomTrackScheduler trackScheduler;
+    private final CustomTrackScheduler trackScheduler;
 
     // Audio Output
-    private CustomAudioOutput audioOutput;
+    private final CustomAudioOutput audioOutput;
 
     // Volume Control
     private int volume;
@@ -22,7 +25,7 @@ public class MusicPlayer {
     // Configuration
     private Config config;
 
-    public MusicPlayer() {
+    public CustomMusicPlayer() {
         // Initialize components
         audioPlayerManager = new CustomAudioPlayerManager();
         audioPlayer = audioPlayerManager.createPlayer();
@@ -46,14 +49,11 @@ public class MusicPlayer {
     public void loadMusic(String url) {
         // Implement music loading logic
     }
-
-    // Method to control playback
-
-
+    public void updateFilter() {
 
     }
 
-    // Additional methods as needed
+}
 
 
-    }
+
