@@ -1,7 +1,7 @@
 package ru.kelcuprum.waterplayer.frontend.gui.screens.control;
 
 import com.github.topi314.lavalyrics.lyrics.AudioLyrics;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ru.kelcuprum.waterplayer.backend.OpenAL.AudioTrack;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

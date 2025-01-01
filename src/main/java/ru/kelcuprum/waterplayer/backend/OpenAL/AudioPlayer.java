@@ -1,6 +1,6 @@
-package ru.kelcuprum.waterplayer.backend.melody.OpenAL;
+package ru.kelcuprum.waterplayer.backend.OpenAL;
 
-public class CustomAudioPlayer {
+public class AudioPlayer {
 
         private int volume;
         private boolean isPlaying;

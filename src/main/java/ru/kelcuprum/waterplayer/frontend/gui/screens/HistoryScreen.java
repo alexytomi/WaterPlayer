@@ -1,6 +1,6 @@
 package ru.kelcuprum.waterplayer.frontend.gui.screens;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ru.kelcuprum.waterplayer.backend.OpenAL.AudioTrack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;

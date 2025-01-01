@@ -12,25 +12,23 @@
  * THE SOFTWARE.
  */
 
-package ru.kelcuprum.waterplayer.backend.melody.OpenAL;
+package ru.kelcuprum.waterplayer.backend.OpenAL;
 
-import com.sedmelluq.discord.lavaplayer.format.AudioDataFormatTools;
-import ru.kelcuprum.waterplayer.WaterPlayer;
 import ru.kelcuprum.waterplayer.backend.MusicPlayer;
-import ru.kelcuprum.waterplayer.backend.melody.CustomMusicPlayer;
+
 
 import javax.sound.sampled.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomAudioOutput extends Thread {
+public class AudioOutput extends Thread {
 
-    private final CustomMusicPlayer musicPlayer;
+    private final MusicPlayer musicPlayer;
     private final DataLine.Info speakerInfo;
     private Mixer mixer;
     private SourceDataLine sourceLine;
 
-    public CustomAudioOutput(CustomMusicPlayer musicPlayer) {
+    public AudioOutput(MusicPlayer musicPlayer) {
         this.musicPlayer = musicPlayer;
         speakerInfo = new DataLine.Info(SourceDataLine.class, null);
     }

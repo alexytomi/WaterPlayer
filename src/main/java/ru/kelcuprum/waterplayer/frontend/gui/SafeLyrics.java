@@ -1,7 +1,7 @@
 package ru.kelcuprum.waterplayer.frontend.gui;
 
 import com.github.topi314.lavalyrics.lyrics.AudioLyrics;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ru.kelcuprum.waterplayer.backend.OpenAL.AudioTrack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

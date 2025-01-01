@@ -1,4 +1,4 @@
 package ru.kelcuprum.waterplayer.backend.sources.directory;
 
-public class DirectoryPlaylist {
+public class DirectorySource {
 }

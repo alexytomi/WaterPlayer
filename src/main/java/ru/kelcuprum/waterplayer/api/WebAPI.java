@@ -1,7 +1,7 @@
 package ru.kelcuprum.waterplayer.api;
 
 import com.google.gson.JsonObject;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ru.kelcuprum.waterplayer.backend.OpenAL.AudioTrack;
 import express.Express;
 import express.middleware.CorsOptions;
 import express.middleware.Middleware;
