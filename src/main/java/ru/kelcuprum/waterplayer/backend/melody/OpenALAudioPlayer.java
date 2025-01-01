@@ -14,13 +14,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class OpenALAudioPlayer implements AudioPlayer {
+    private int source;
+    private AudioTrack playingTrack;
+    private boolean paused;
+    private int volume;
+
+    public OpenALAudioPlayer() {
+        source = AL10.alGenSources();
+        volume = 100; // Default volume
+    }
 
     /**
      * @return Currently playing track
      */
     @Override
     public AudioTrack getPlayingTrack() {
-        return null;
+        return playingTrack;
     }
 
     /**
@@ -28,7 +37,10 @@ public class OpenALAudioPlayer implements AudioPlayer {
      */
     @Override
     public void playTrack(AudioTrack track) {
-
+        stopTrack();
+        this.playingTrack = track;
+        // Load track data into OpenAL buffer and queue it to the source
+        // This part depends on how you handle track data
     }
 
     /**
@@ -38,7 +50,12 @@ public class OpenALAudioPlayer implements AudioPlayer {
      */
     @Override
     public boolean startTrack(AudioTrack track, boolean noInterrupt) {
-        return false;
+        if (noInterrupt && AL10.alGetSourcei(source, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING) {
+            return false;
+        }
+        playTrack(track);
+        AL10.alSourcePlay(source);
+        return true;
     }
 
     /**
@@ -46,7 +63,8 @@ public class OpenALAudioPlayer implements AudioPlayer {
      */
     @Override
     public void stopTrack() {
-
+        AL10.alSourceStop(source);
+        playingTrack = null;
     }
 
     /**
@@ -54,7 +72,7 @@ public class OpenALAudioPlayer implements AudioPlayer {
      */
     @Override
     public int getVolume() {
-        return 0;
+        return volume;
     }
 
     /**
@@ -62,7 +80,8 @@ public class OpenALAudioPlayer implements AudioPlayer {
      */
     @Override
     public void setVolume(int volume) {
-
+        this.volume = volume;
+        AL10.alSourcef(source, AL10.AL_GAIN, volume / 100.0f);
     }
 
     /**
