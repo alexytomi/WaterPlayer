@@ -4,6 +4,8 @@ import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormatTools;
 import com.sedmelluq.discord.lavaplayer.format.AudioPlayerInputStream;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.openal.AL10;
 import ru.kelcuprum.waterplayer.WaterPlayer;
@@ -16,6 +18,7 @@ import java.util.List;
 
 public class AudioOutput extends Thread {
 
+    private static final Log log = LogFactory.getLog(AudioOutput.class);
     private final MusicPlayer musicPlayer;
     private final AudioFormat format;
 
@@ -29,6 +32,7 @@ public class AudioOutput extends Thread {
 
     public void run() {
         WaterPlayer.log("running");
+        log.info("running");
         try {
             final AudioPlayer player = musicPlayer.getAudioPlayer();
             final AudioDataFormat dataFormat = musicPlayer.getAudioDataFormat();

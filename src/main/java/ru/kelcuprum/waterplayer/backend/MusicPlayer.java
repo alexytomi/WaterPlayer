@@ -284,6 +284,7 @@ public class MusicPlayer {
     }
 
     public void startAudioOutput() {
+        WaterPlayer.log("starting audiooutput thread");
         audioOutput.start();
     }
 
